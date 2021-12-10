@@ -1,4 +1,4 @@
-# docker build . -f rocky.dockerfile -t baconphat/rocky
+# docker build -f rocky.dockerfile --rm -t baconphat/rocky .
 
 
 FROM rockylinux/rockylinux:8.4
