@@ -1,22 +1,4 @@
-#
-# Home Assistant
-#
 services:
-  # homeassistant:
-  #   image: lscr.io/linuxserver/homeassistant:latest
-  #   container_name: homeassistant
-  #   network_mode: host
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=America/Denver
-  #   # volumes:
-  #   #   - HomeAssistant_Config:/config
-  #   ports:
-  #     - 8123:8123
-  #   # devices:
-  #   #   - /path/to/device:/path/to/device #optional
-  #   restart: unless-stopped
 #
 # Pihole
 #
@@ -31,7 +13,7 @@ services:
       - "53:53/udp"
       - "8080:80/tcp"
     environment:
-      TZ: 'America/Chicago'
+      TZ: 'America/Denver'
       # WEBPASSWORD: 'set a secure password here or it will be random'
     # Volumes store your data between container upgrades
     volumes:
