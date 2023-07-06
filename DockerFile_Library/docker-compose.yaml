@@ -1,0 +1,78 @@
+<<<<<<< HEAD:docker-compose.yaml
+# ===========================================================================================
+# Title   Docker Compose YAML
+# Created By: PJ Guibord
+# Date 08/31/2022
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+# Use:
+#   Start containers:: docker compose --file S:\Repos\GitHub\Docker\docker-compose.yaml up --detach
+#
+# To Move container data:
+#     wsl --shutdown
+#     wsl --export docker-desktop-data E:\TEMP\docker-desktop-data.tar
+#     wsl --unregister docker-desktop-data
+#     wsl --import docker-desktop-data E:\Docker\VHD E:\TEMP\docker-desktop-data.tar --version 2
+
+
+version: "3"
+services:  
+# OpenSpeedTest
+  openspeedtest:
+    container_name: OpenSpeedTest
+    image: openspeedtest/latest:latest
+    ports:
+      - "80:3000"
+      - "443:3001"
+    restart: unless-stopped
+# Pihole - More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+  pihole:
+    container_name: PiHole
+    hostname: ${Pi_Hostname}
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "8080:80/tcp"
+    environment:
+      TZ: ${Pi_TZ}
+      WEBPASSWORD: ${Pi_Pass}
+      FTLCONF_LOCAL_IPV4: ${Pi_IP}
+      ADMIN_EMAIL: ${Pi_Email}
+      PIHOLE_DNS: ${Pi_DNS}
+      DHCP_ACTIVE: "false"
+      DHCP_ROUTER: ${Pi_DHCP_Router}
+    volumes:
+     - './pihole_app:/etc/pihole'
+     - './dns_config:/etc/dnsmasq.d'    
+    restart: unless-stopped
+
+=======
+services:
+#
+# Pihole
+#
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+  pihole:
+    container_name: PiHole
+    hostname: XionPi
+    image: pihole/pihole:latest
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8080:80/tcp"
+    environment:
+      TZ: 'America/Denver'
+      # WEBPASSWORD: 'set a secure password here or it will be random'
+    # Volumes store your data between container upgrades
+    volumes:
+      - './etc-pihole:/etc/pihole'
+      - './etc-dnsmasq.d:/etc/dnsmasq.d'    
+    restart: unless-stopped
+>>>>>>> cf8452b8d9cabb08ad779295635bf4426b11930b:DockerFile_Library/docker-compose.yaml
