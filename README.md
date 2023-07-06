@@ -8,5 +8,5 @@ This is a really simple speed test solution for my internal home network, using 
 https://openspeedtest.com/
 
 ## PiHole
-This is one of my favorite projects, I started on a Raspberry Pi 2B, which grew up as my client list grew in my house.  I can block all sorts of junk DNS queries from my various smart devices, while not blocking the functions.  I am a supporter of this project, I highly recommend you check it out!
+This is one of my favorite projects, local DNS filtering. I started on a Raspberry Pi 2B, which grew up as my client list grew in my house.  I can block all sorts of junk DNS queries from my various smart devices, while not blocking the functions.  I am a supporter of this project, I highly recommend you check it out!
 http://pi-hole.net
