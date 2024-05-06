@@ -1,0 +1,57 @@
+# Deploy OpenSpeedtest
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openspeedtest
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: openspeedtest
+  name: app-openspeedtest
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-openspeedtest
+  template:
+    metadata:
+      labels:
+        app: app-openspeedtest
+    spec:
+      containers:
+      - name: app-openspeedtest
+        image: openspeedtest/latest:v2.0.5
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "1000m"
+        ports:
+        - containerPort: 3000
+        - containerPort: 3001
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: openspeedtest
+  name: svc-openspeedtest
+spec:
+  ipFamilyPolicy: SingleStack
+  ipFamilies:
+  - IPv6
+  type: LoadBalancer
+  loadBalancerIP: 2600:6ce6:4400:180::64
+  selector:
+    app: app-openspeedtest
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 3000
+    name: web
+  - port: 3001
+    protocol: TCP
+    targetPort: 3001
+    name: backend
