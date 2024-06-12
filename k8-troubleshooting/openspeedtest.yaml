@@ -3,16 +3,16 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: openspeedtest
+  name: pj-test
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: openspeedtest
+  namespace: pj-test
   name: app-openspeedtest
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: app-openspeedtest
@@ -31,19 +31,23 @@ spec:
         ports:
         - containerPort: 3000
         - containerPort: 3001
+      # volumes:
+      # - name: pj-test-volume-bind
+      #   persistentVolumeClaim:
+      #     claimName: pvc-pj-test
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: openspeedtest
+  namespace: pj-test
   name: svc-openspeedtest
 spec:
   ipFamilyPolicy: SingleStack
   ipFamilies:
-  - IPv6
+  - IPv4
   type: LoadBalancer
-  loadBalancerIP: 2600:6ce6:4400:180::64
+  loadBalancerIP: 10.93.16.37
   selector:
     app: app-openspeedtest
   ports:
@@ -51,7 +55,7 @@ spec:
     protocol: TCP
     targetPort: 3000
     name: web
-  - port: 3001
+  - port: 443
     protocol: TCP
     targetPort: 3001
     name: backend
