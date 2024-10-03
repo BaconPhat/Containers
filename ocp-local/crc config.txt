@@ -1,0 +1,4 @@
+crc config set pull-secret-file /Users/P2957264/Documents/pull-secret.txt
+crc config set consent-telemetry no
+crc config set disable-update-check true
+crc config set kubeadmin-password ComcastSucks!
