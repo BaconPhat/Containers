@@ -3,6 +3,12 @@ This is a journey for me, I've been playing with containers for a little bit now
 
 I started with Docker, as I would say most would, Containers in general are going through an evelution with engines, CLI tools, etc. I'm started my journey with VMware Tanzu, then onto SUSE Rancher, now in the realm of Red Hat OpenShift.  So far, massive learning curves with each but I am having fun again!
 
+## k8-class
+This me learning high-level stuff, should be ever changing.
+
+## ocp-local
+I am using OCP local on my system, also should be ever changing
+
 # Containers I Use:
 
 ## Open Speed Test
