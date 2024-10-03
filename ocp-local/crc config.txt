@@ -1,4 +1,21 @@
+# Stop CRC if running
+crc stop
+
+# Delele VM
+crc delete
+
+# Removes an existing CRC virtual machine and reverts 
+# changes to DNS entries created by the crc setup command.
+crc cleanup
+
+# Pre-Config CRC
 crc config set pull-secret-file /Users/P2957264/Documents/pull-secret.txt
 crc config set consent-telemetry no
 crc config set disable-update-check true
-crc config set kubeadmin-password ComcastSucks!
+crc config set kubeadmin-password L3goBlocks!
+
+# Deploy new instance
+crc setup
+
+# Start CRC
+crc start
