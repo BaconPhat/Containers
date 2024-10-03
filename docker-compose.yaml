@@ -2,23 +2,29 @@
 # Title   Docker Compose YAML
 # Created By: PJ Guibord
 # Date 08/31/2022
-# Revision: n/a
-# Version: 1.0
+# Revision: 09/30/2024
+# Version: 1.2
 # ===========================================================================================
 # Revision History:
-#   - 1.0: Initial Release
+#   - 1.0: Initial Release - OpenSpeedTest - does this work? YES!
+#   - 1.1: Added PiHole
+#   - 1.1: Added Jellyfin and Apache
 # ===========================================================================================
 
-version: "3"
-services:  
+
+
+services:
 # OpenSpeedTest
   openspeedtest:
-    container_name: OpenSpeedTest
+    container_name: openspeedtest
     image: openspeedtest/latest:latest
     ports:
-      - "80:3000"
+      - "3000:3000"
       - "443:3001"
     restart: unless-stopped
+
+
+
 # Pihole - More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
   pihole:
     container_name: PiHole
@@ -28,17 +34,46 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
       - "67:67/udp"
-      - "8080:80/tcp"
+      - "80:80/tcp"
     environment:
       TZ: ${Pi_TZ}
       WEBPASSWORD: ${Pi_Pass}
       FTLCONF_LOCAL_IPV4: ${Pi_IP}
       ADMIN_EMAIL: ${Pi_Email}
-      PIHOLE_DNS: ${Pi_DNS}
+      PIHOLE_DNS_: "208.67.222.123;208.67.220.123"
       DHCP_ACTIVE: "false"
       DHCP_ROUTER: ${Pi_DHCP_Router}
     volumes:
-     - './pihole_app:/etc/pihole'
-     - './dns_config:/etc/dnsmasq.d'    
+     - '${Pi_Data_App}:/etc/pihole'
+     - '${Pi_Data_Config}:/etc/dnsmasq.d'    
     restart: unless-stopped
 
+
+# Jellyfin
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Denver
+      - JELLYFIN_PublishedServerUrl= '${Jellyfin_ServerURL}' #optional
+    volumes:
+      - '${Jellyfin_Config}:/config'
+      - '${Jellyfin_Media_Path}:/data/movies'
+    ports:
+      # NOTE:: You need to create these in the local firewall first to access the UI
+      #
+      - 8096:8096 # Web UI
+      - 7359:7359/udp # Allows clients to discover Jellyfin on the local network.
+      - 1900:1900/udp # Service discovery used by DNLA and clients.
+    restart: unless-stopped
+
+# Nginx
+  apache:
+    image: httpd:latest
+    container_name: apache
+    ports:
+    - '8787:80'
+    volumes:
+      - '${Apache_HTML}:/usr/local/apache2/htdocs'
