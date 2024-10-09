@@ -8,7 +8,7 @@
 # Revision History:
 #   - 1.0: Initial Release - OpenSpeedTest - does this work? YES!
 #   - 1.1: Added PiHole
-#   - 1.1: Added Jellyfin and Apache
+#   - 1.1: Added Plex and Nginx
 # ===========================================================================================
 
 
@@ -18,25 +18,25 @@ services:
   openspeedtest:
     container_name: openspeedtest
     image: openspeedtest/latest:latest
+    restart: unless-stopped
     ports:
       - "3000:3000"
       - "443:3001"
-    restart: unless-stopped
-
 
 
 # Pihole - More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
   pihole:
-    container_name: PiHole
+    container_name: pihole
     hostname: ${Pi_Hostname}
     image: pihole/pihole:latest
+    restart: unless-stopped
     ports:
       - "53:53/tcp"
       - "53:53/udp"
       - "67:67/udp"
       - "80:80/tcp"
     environment:
-      TZ: ${Pi_TZ}
+      TZ: ${Global_TZ}
       WEBPASSWORD: ${Pi_Pass}
       FTLCONF_LOCAL_IPV4: ${Pi_IP}
       ADMIN_EMAIL: ${Pi_Email}
@@ -45,35 +45,46 @@ services:
       DHCP_ROUTER: ${Pi_DHCP_Router}
     volumes:
      - '${Pi_Data_App}:/etc/pihole'
-     - '${Pi_Data_Config}:/etc/dnsmasq.d'    
+     - '${Pi_Data_Config}:/etc/dnsmasq.d'
+
+
+# Plex
+  plex:
+    container_name: plex
+    image: plexinc/pms-docker:latest
     restart: unless-stopped
-
-
-# Jellyfin
-  jellyfin:
-    image: lscr.io/linuxserver/jellyfin:latest
-    container_name: jellyfin
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Denver
-      - JELLYFIN_PublishedServerUrl= '${Jellyfin_ServerURL}' #optional
-    volumes:
-      - '${Jellyfin_Config}:/config'
-      - '${Jellyfin_Media_Path}:/data/movies'
     ports:
-      # NOTE:: You need to create these in the local firewall first to access the UI
-      #
-      - 8096:8096 # Web UI
-      - 7359:7359/udp # Allows clients to discover Jellyfin on the local network.
-      - 1900:1900/udp # Service discovery used by DNLA and clients.
-    restart: unless-stopped
+      - "32400:32400/tcp"
+      - "3005:3005/tcp"
+      - "8324:8324/tcp"
+      - "32469:32469/tcp"
+      - "1900:1900/udp"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${Global_TZ}
+      - PLEX_CLAIM=${Plex_Claim}
+      - HOSTNAME=${Plex_Hostname}
+      - ADVERTISE_IP=${Plex_Advertise}
+      - ALLOWED_NETWORKS=${Plex_Allowed_Nets}
+    volumes:
+      - '${Plex_Config}:/config'
+      - '${Plex_Transcode}:/transcode'
+      - '${Plex_Media}:/media'
+
 
 # Nginx
-  apache:
-    image: httpd:latest
-    container_name: apache
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    restart: unless-stopped
     ports:
-    - '8787:80'
+      - "8787:80"
+    environment:
+    - NGINX_HOST=themakerspace.guibord.org
     volumes:
-      - '${Apache_HTML}:/usr/local/apache2/htdocs'
+      - '${Nginx_HTML}:/usr/share/nginx/html'
