@@ -20,7 +20,7 @@ services:
     image: openspeedtest/latest:latest
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "80:3000"
       - "443:3001"
 
 
@@ -34,7 +34,7 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
       - "67:67/udp"
-      - "80:80/tcp"
+      - "8080:80/tcp"
     environment:
       TZ: ${Global_TZ}
       WEBPASSWORD: ${Pi_Pass}
@@ -48,33 +48,33 @@ services:
      - '${Pi_Data_Config}:/etc/dnsmasq.d'
 
 
-# Plex
-  plex:
-    container_name: plex
-    image: plexinc/pms-docker:latest
-    restart: unless-stopped
-    ports:
-      - "32400:32400/tcp"
-      - "3005:3005/tcp"
-      - "8324:8324/tcp"
-      - "32469:32469/tcp"
-      - "1900:1900/udp"
-      - "32410:32410/udp"
-      - "32412:32412/udp"
-      - "32413:32413/udp"
-      - "32414:32414/udp"
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${Global_TZ}
-      - PLEX_CLAIM=${Plex_Claim}
-      - HOSTNAME=${Plex_Hostname}
-      - ADVERTISE_IP=${Plex_Advertise}
-      - ALLOWED_NETWORKS=${Plex_Allowed_Nets}
-    volumes:
-      - '${Plex_Config}:/config'
-      - '${Plex_Transcode}:/transcode'
-      - '${Plex_Media}:/media'
+# # Plex
+#   plex:
+#     container_name: plex
+#     image: plexinc/pms-docker:latest
+#     restart: unless-stopped
+#     ports:
+#       - "32400:32400/tcp"
+#       - "3005:3005/tcp"
+#       - "8324:8324/tcp"
+#       - "32469:32469/tcp"
+#       - "1900:1900/udp"
+#       - "32410:32410/udp"
+#       - "32412:32412/udp"
+#       - "32413:32413/udp"
+#       - "32414:32414/udp"
+#     environment:
+#       - PUID=${PUID}
+#       - PGID=${PGID}
+#       - TZ=${Global_TZ}
+#       - PLEX_CLAIM=${Plex_Claim}
+#       - HOSTNAME=${Plex_Hostname}
+#       - ADVERTISE_IP=${Plex_Advertise}
+#       - ALLOWED_NETWORKS=${Plex_Allowed_Nets}
+#     volumes:
+#       - '${Plex_Config}:/config'
+#       - '${Plex_Transcode}:/transcode'
+#       - '${Plex_Media}:/media'
 
 
 # Nginx
