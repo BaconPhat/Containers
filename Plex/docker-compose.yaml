@@ -1,0 +1,43 @@
+# ===========================================================================================
+# Title   Docker Compose YAML
+# Created By: PJ Guibord
+# Date 09/30/2024
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  plex:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    ports:
+      - "32400:32400/tcp"
+      - "3005:3005/tcp"
+      - "8324:8324/tcp"
+      - "32469:32469/tcp"
+      - "1900:1900/udp"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${time_zone}
+      - PLEX_CLAIM=${Plex_Claim}
+      - HOSTNAME=${Plex_Hostname}
+      - ADVERTISE_IP=${Plex_Advertise}
+      - ALLOWED_NETWORKS=${Plex_Allowed_Nets}
+    volumes:
+      - '${Plex_Config}:/config'
+      - '${Plex_Transcode}:/transcode'
+      - '${Plex_Media}:/media'

@@ -1,0 +1,32 @@
+# ===========================================================================================
+# Title   OpenSpeedTest
+# Created By: PJ Guibord
+# Date 09/30/2024
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+
+services:
+  nginx-proxy:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    ports:
+      - '${nginx_port1}:80'
+      #- '${nginx_port2}:443'
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ='${time_zone}'
+    volumes:
+    - '${nginx_config}:/etc/nginx/conf.d/default.conf'
+    - '${apache_site1_html}:/usr/local/apache2/htdocs/'

@@ -1,0 +1,24 @@
+# ===========================================================================================
+# Title   OpenSpeedTest
+# Created By: PJ Guibord
+# Date 08/31/2022
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+
+services:
+  openspeedtest:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    ports:
+      - '${openspeedtest_port}:3000'

@@ -1,0 +1,37 @@
+# ===========================================================================================
+# Title   Mealie
+# Created By: PJ Guibord
+# Date 09/30/2024
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  mealie:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    ports:
+      - '${mealie_port}:9000'
+    environment:
+      - ALLOW_SIGNUP=true
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${time_zone}
+      - MAX_WORKERS=1 # Limits the number of workers to 1
+      - WEB_CONCURRENCY=7
+      - BASE_URL='${mealie_url}'
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    volumes:
+      - '${mealie_config}:/app/data/'

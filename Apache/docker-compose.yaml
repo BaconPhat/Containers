@@ -1,0 +1,25 @@
+# ===========================================================================================
+# Title   Apache
+# Created By: PJ Guibord
+# Date 09/20/2024
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  webesite1:
+    container_name: ${container_name}
+    image:  ${image}
+    restart: unless-stopped
+    ports:
+    - '${apache_site1_port}:80'
+    volumes:
+      - '${apache_site1_html}:/usr/local/apache2/htdocs/'
