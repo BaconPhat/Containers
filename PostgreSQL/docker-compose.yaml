@@ -1,0 +1,41 @@
+# ===========================================================================================
+# Title   PostgreSQL
+# Created By: PJ Guibord
+# Date 01/04/2025
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+
+services:
+  db:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${postgres_un}
+      POSTGRES_PASSWORD: ${postgres_pw}
+      POSTGRES_DB: homebase
+    volumes:
+      - '${postgresql_data}:/var/lib/postgresql/data'
+    ports:
+      - '${postgresql_port}:5432'
+    networks:
+      - db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  db:
+    driver: bridge
