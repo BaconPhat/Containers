@@ -24,9 +24,3 @@ services:
     - '${apache_site1_port}:80'
     volumes:
       - '${apache_site1_html}:/usr/local/apache2/htdocs/'
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://${host}:${apache_site1_port} || exit 1"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 5
-      start_period: 10s
