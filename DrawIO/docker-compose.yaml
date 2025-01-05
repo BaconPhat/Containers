@@ -1,7 +1,7 @@
 # ===========================================================================================
-# Title   Mealie
+# Title   OpenSpeedTest
 # Created By: PJ Guibord
-# Date 09/30/2024
+# Date 08/31/2022
 # Revision: n/a
 # Version: 1.0
 # ===========================================================================================
@@ -14,23 +14,12 @@
 # Start containers:: 
 #   docker compose up --detach
 
+
 services:
-  mealie:
+  drawio:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
     ports:
-      - '${mealie_port}:9000'
-    environment:
-      ALLOW_SIGNUP: false
-      # PUID: ${PUID}
-      # PGID: ${PGID}
-      TZ: ${time_zone}
-      BASE_URL: ${mealie_url}
-    deploy:
-      resources:
-        limits:
-          memory: 1000M
-    volumes:
-      - '${mealie_config}:/app/data/'
-  
+      - '${drawio_port1}:8080'
+      - '${drawio_port2}:8443'
