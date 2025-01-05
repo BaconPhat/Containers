@@ -2,11 +2,12 @@
 # Title   Apache
 # Created By: PJ Guibord
 # Date 09/20/2024
-# Revision: n/a
-# Version: 1.0
+# Revision: 01/04/2025
+# Version: 1.1
 # ===========================================================================================
 # Revision History:
 #   - 1.0: Initial Release
+#   - 1.1: Added health check
 # ===========================================================================================
 
 # docker run -p <HostPort:containerport> imagename:tag
@@ -23,3 +24,9 @@ services:
     - '${apache_site1_port}:80'
     volumes:
       - '${apache_site1_html}:/usr/local/apache2/htdocs/'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://${host}:${apache_site1_port} || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
