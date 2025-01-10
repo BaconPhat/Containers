@@ -1,0 +1,40 @@
+# ===========================================================================================
+# Title   AdGuard Home
+# Created By: PJ Guibord
+# Date 01/4/2025
+# Revision: n/a
+# Version: 1.0
+# URL: https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+
+services:
+  pihole:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    network_mode: host
+    # ports:
+    #   # WebUI
+    #   - ${pihole_port}:80/tcp
+    #   # DNS
+    #   - 53:53/tcp
+    #   - 53:53/udp
+    #   # # DHCP server
+    #   # - 67:67/udp
+    #   # - 68:68/udp
+    environment:
+      TZ: ${time_zone}
+      WEBPASSWORD: ${pihole_pass}
+    volumes:
+      - '${pihole_config}/etc-pihole:/etc/pihole'
+      - '${pihole_config}/etc-dnsmasq.d:/etc/dnsmasq.d'
+      # - '${pihole_config}/lighttpd:/etc/lighttpd'
