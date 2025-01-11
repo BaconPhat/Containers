@@ -1,0 +1,37 @@
+# ===========================================================================================
+# Title   Chrony
+# Created By: PJ Guibord
+# Date 01/11/2025
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+
+services:
+  chrony:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    ports:
+      - 123:123/udp
+    environment:
+      - NTP_SERVERS=${time_sources}
+      - LOG_LEVEL=0
+      - TZ='${timezone}'
+      - ENABLE_NTS=true
+      - ENABLE_SYSCLK=true
+    read_only: true
+    tmpfs:
+      - /etc/chrony:rw,mode=1750
+      - /run/chrony:rw,mode=1750
+      - /var/lib/chrony:rw,mode=1750
+    cap_add:
+      - SYS_TIME
