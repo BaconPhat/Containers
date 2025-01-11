@@ -17,25 +17,36 @@
 
 services:
   db:
-    container_name: ${container_name}
-    image: ${image}
+    container_name: ${container_name1}
+    image: ${image1}
     restart: unless-stopped
+    ports:
+      - '${postgresql_port}:5432'
     environment:
       POSTGRES_USER: ${postgres_un}
       POSTGRES_PASSWORD: ${postgres_pw}
       POSTGRES_DB: homebase
     volumes:
       - '${postgresql_data}:/var/lib/postgresql/data'
-    ports:
-      - '${postgresql_port}:5432'
-    networks:
-      - db
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d postgres" ]
       interval: 30s
       timeout: 10s
       retries: 5
+  
 
-networks:
-  db:
-    driver: bridge
+  pgadmin:
+    container_name: ${container_name2}
+    image: ${image2}
+    restart: unless-stopped
+    ports:
+      - '${pgadmin_port}:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${pgadmin_email}
+      PGADMIN_DEFAULT_PASSWORD: ${pgadmin_pw}
+    volumes:
+      - '${pgadmin_data}:/var/lib/pgadmin'
+
+
+
+
