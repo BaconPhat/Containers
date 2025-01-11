@@ -25,10 +25,29 @@ services:
       ALLOW_SIGNUP: false
       TZ: ${time_zone}
       BASE_URL: ${mealie_url}
+      # DB_ENGINE: postgres
+      # # =====================================
+      # # Postgres Config
+      # POSTGRES_USER: mealie
+      # POSTGRES_PASSWORD: mealie
+      # POSTGRES_SERVER: postgres
+      # POSTGRES_PORT: 1948
+      # POSTGRES_DB: mealie
+      # =====================================
+      #Email Configuration
+      SMTP_HOST: ${smtp_host}
+      SMTP_PORT: ${smtp_port}
+      SMTP_AUTH_STRATEGY: TLS # Options: 'TLS', 'SSL', 'NONE'
+      SMTP_FROM_NAME: ${smtp_sender_name}
+      SMTP_FROM_EMAIL: ${smtp_sender_email} 
+      SMTP_USER: ${smtp_un}
+      SMTP_PASSWORD: ${smtp_pw}
     deploy:
       resources:
         limits:
           memory: 1000M
     volumes:
       - '${mealie_config}:/app/data/'
-  
+    # depends_on:
+    #   '${db}:
+    #     condition: service_healthy
