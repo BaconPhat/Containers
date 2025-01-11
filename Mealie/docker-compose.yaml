@@ -23,8 +23,6 @@ services:
       - '${mealie_port}:9000'
     environment:
       ALLOW_SIGNUP: false
-      # PUID: ${PUID}
-      # PGID: ${PGID}
       TZ: ${time_zone}
       BASE_URL: ${mealie_url}
     deploy:
