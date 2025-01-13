@@ -2,11 +2,12 @@
 # Title   Mealie
 # Created By: PJ Guibord
 # Date 09/30/2024
-# Revision: n/a
-# Version: 1.0
+# Revision: 01/12/2025
+# Version: 2.0
 # ===========================================================================================
 # Revision History:
 #   - 1.0: Initial Release
+#   - 2.0: New release of Mealie, migrated database backend to Postgres, added SMTP content
 # ===========================================================================================
 
 # docker run -p <HostPort:containerport> imagename:tag
@@ -25,16 +26,18 @@ services:
       ALLOW_SIGNUP: false
       TZ: ${time_zone}
       BASE_URL: ${mealie_url}
-      # DB_ENGINE: postgres
+      PUID: ${PUID}
+      PGID: ${GUID}
+      DB_ENGINE: postgres
       # # =====================================
-      # # Postgres Config
-      # POSTGRES_USER: mealie
-      # POSTGRES_PASSWORD: mealie
-      # POSTGRES_SERVER: postgres
-      # POSTGRES_PORT: 1948
-      # POSTGRES_DB: mealie
+      # Postgres Config
+      POSTGRES_DB: ${mealie_db}
+      POSTGRES_USER: ${mealie_db_un}
+      POSTGRES_PASSWORD: ${mealie_db_pw}
+      POSTGRES_SERVER: ${mealie_db_server}
+      POSTGRES_PORT: ${mealie_db_port}
       # =====================================
-      #Email Configuration
+      # Email Configuration
       SMTP_HOST: ${smtp_host}
       SMTP_PORT: ${smtp_port}
       SMTP_AUTH_STRATEGY: TLS # Options: 'TLS', 'SSL', 'NONE'
@@ -48,6 +51,3 @@ services:
           memory: 1000M
     volumes:
       - '${mealie_config}:/app/data/'
-    # depends_on:
-    #   '${db}:
-    #     condition: service_healthy
