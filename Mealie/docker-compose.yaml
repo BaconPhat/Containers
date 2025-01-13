@@ -30,7 +30,7 @@ services:
       TZ: ${time_zone}
       BASE_URL: ${mealie_url}
       PUID: ${PUID}
-      PGID: ${GUID}
+      PGID: ${PGID}
       DB_ENGINE: postgres
       # # =====================================
       # Postgres Config
