@@ -16,7 +16,7 @@
 
 
 services:
-  db:
+  postgres:
     container_name: ${container_name1}
     image: ${image1}
     restart: unless-stopped
@@ -25,11 +25,11 @@ services:
     environment:
       POSTGRES_USER: ${postgres_un}
       POSTGRES_PASSWORD: ${postgres_pw}
-      POSTGRES_DB: homebase
+      POSTGRES_DB: ${postgres_db}
     volumes:
       - '${postgresql_data}:/var/lib/postgresql/data'
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 30s
       timeout: 10s
       retries: 5
