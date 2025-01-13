@@ -1,5 +1,6 @@
+---
 # ===========================================================================================
-# Title   OpenSpeedTest
+# Title   Nginx Reverse Proxy
 # Created By: PJ Guibord
 # Date 09/30/2024
 # Revision: n/a
@@ -20,6 +21,8 @@ services:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
+    env_file:
+       - .env
     ports:
       - '${nginx_port1}:80'
       #- '${nginx_port2}:443'

@@ -1,3 +1,4 @@
+---
 # ===========================================================================================
 # Title   Chrony
 # Created By: PJ Guibord
@@ -20,6 +21,8 @@ services:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
+    env_file:
+       - .env
     ports:
       - 123:123/udp
     environment:

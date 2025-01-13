@@ -1,3 +1,4 @@
+---
 # ===========================================================================================
 # Title   PostgreSQL
 # Created By: PJ Guibord
@@ -20,6 +21,8 @@ services:
     container_name: ${container_name1}
     image: ${image1}
     restart: unless-stopped
+    env_file:
+       - .env
     ports:
       - '${postgresql_port}:5432'
     environment:
@@ -39,6 +42,8 @@ services:
     container_name: ${container_name2}
     image: ${image2}
     restart: unless-stopped
+    env_file:
+       - .env
     ports:
       - '${pgadmin_port}:80'
     environment:

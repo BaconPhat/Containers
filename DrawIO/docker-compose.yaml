@@ -1,3 +1,4 @@
+---
 # ===========================================================================================
 # Title   DrawIO
 # Created By: PJ Guibord
@@ -20,6 +21,8 @@ services:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
+    env_file:
+       - .env
     ports:
       - '${drawio_port1}:8080'
       - '${drawio_port2}:8443'
