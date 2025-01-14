@@ -17,6 +17,7 @@
 
 
 services:
+# DB
   postgres:
     container_name: ${container_name1}
     image: ${image1}
@@ -31,13 +32,16 @@ services:
       POSTGRES_DB: ${postgres_db}
     volumes:
       - '${postgresql_data}:/var/lib/postgresql/data'
+      - '${postgresql_backups}:/backups'
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 30s
       timeout: 10s
       retries: 5
-  
 
+
+
+# Tools
   pgadmin:
     container_name: ${container_name2}
     image: ${image2}
