@@ -26,12 +26,14 @@ services:
     ports:
       - '${mealie_port}:9000'
     environment:
+      DB_ENGINE: postgres
       ALLOW_SIGNUP: false
       TZ: ${time_zone}
       BASE_URL: ${mealie_url}
       PUID: ${PUID}
       PGID: ${PGID}
-      DB_ENGINE: postgres
+      DEFAULT_GROUP: Home
+      DEFAULT_HOUSEHOLD: Family
       # # =====================================
       # Postgres Config
       POSTGRES_DB: ${mealie_db}
