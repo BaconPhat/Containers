@@ -1,0 +1,32 @@
+---
+# ===========================================================================================
+# Title   FreshRSS
+# Created By: PJ Guibord
+# Date 01/18/2025
+# Revision: n/a
+# Version: a.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  freshrss:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    env_file:
+       - .env
+    ports:
+      - '${freshrss_port}:80'
+    environment:
+      TZ: ${time_zone}
+      PUID: ${PUID}
+      PGID: ${PGID}
+    volumes:
+      - '${freshrss_config}:/config'
