@@ -46,5 +46,3 @@ services:
       - '${phpmyadmin_port}:80'
     environment:
       - PMA_ARBITRARY=1
-    volumes:
-      - '${phpmyadmin_config}:/etc/phpmyadmin/'
