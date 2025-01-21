@@ -34,7 +34,7 @@ services:
       PGID: ${PGID}
       DEFAULT_GROUP: Home
       DEFAULT_HOUSEHOLD: Family
-      # # =====================================
+      # =====================================
       # Postgres Config
       POSTGRES_DB: ${mealie_db}
       POSTGRES_USER: ${mealie_db_un}
