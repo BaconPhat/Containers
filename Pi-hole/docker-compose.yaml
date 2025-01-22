@@ -37,7 +37,7 @@ services:
       PIHOLE_DNS_: ${pihole_upstream_dns}
       TEMPERATUREUNIT: f
       WEBUIBOXEDLAYOUT: traditional
-      WEBTHEME: "lcars"
+      # WEBTHEME: "lcars"
       DNSSEC: True
     volumes:
       - '${pihole_config}/etc-pihole:/etc/pihole'
