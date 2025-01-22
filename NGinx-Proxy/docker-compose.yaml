@@ -28,8 +28,11 @@ services:
       - 443:443
       - '${nginx_port}:81'
     environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
       INITIAL_ADMIN_EMAIL: ${nginx_email}
       INITIAL_ADMIN_PASSWORD: ${nginx_admin_pw}
+      DISABLE_IPV6: 'true'
       # =====================================
       # Postgres Config
       POSTGRES_SERVER: ${nginx_db_server}
@@ -37,9 +40,6 @@ services:
       POSTGRES_PASSWORD: ${nginx_db_pw}
       POSTGRES_PORT: ${nginx_db_port}
       POSTGRES_DB: ${nginx_db}
-      # - PUID=${PUID}
-      # - PGID=${PGID}
-      # - TZ=${time_zone}
     volumes:
     - '${nginx_data}:/data'
     - '${nginx_letsencrypt}:/etc/letsencrypt'
