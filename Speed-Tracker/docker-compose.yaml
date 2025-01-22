@@ -1,0 +1,49 @@
+---
+# ===========================================================================================
+# Title   speedtracker
+# Created By: PJ Guibord
+# Date 01/21/2025
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  speedtest-tracker:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    env_file:
+       - .env
+    ports:
+      - '${speedtest_tracker_port}:80'
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      APP_TIMEZONE: ${time_zone}
+      DISPLAY_TIMEZONE: ${time_zone}
+      APP_KEY: ${api_key}
+      ADMIN_NAME: ${admin_un}
+      ADMIN_PASSWORD: ${admin_pw}
+      ADMIN_EMAIL: ${admin_email}
+      PUBLIC_DASHBOARD: true
+      PRUNE_RESULTS_OLDER_THAN: '60'
+      SPEEDTEST_SCHEDULE: '6 */2 * * *'
+      # =====================================
+      # Postgres Config
+      DB_CONNECTION: ${speedtest_tracker_db_connection}
+      DB_HOST: ${speedtest_tracker_db_server}
+      DB_PORT: ${speedtest_tracker_db_port}
+      DB_DATABASE: ${speedtest_tracker_db}
+      DB_USERNAME: ${speedtest_tracker_db_un}
+      DB_PASSWORD: ${speedtest_tracker_db_pw}
+    volumes:
+      - '${speedtest_tracker_config}:/config'
+      - '${speedtest_tracker_keys}:/config/keys'
