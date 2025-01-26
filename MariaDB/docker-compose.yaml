@@ -25,22 +25,14 @@ services:
     env_file:
        - .env
     ports:
-      - '${mariadb_port}:3360'
+      - '${mariadb_port}:3306'
     environment:
       - PUID:=${PUID}
       - PGID=${PGID}
       - TZ=${time_zone}
       - MYSQL_ROOT_PASSWORD=${mariadb_root_pw}
-      - MYSQL_DATABASE=${mariadb_db} # Specify the name of a database to be created
-      - MYSQL_USER=${mariadb_un} # Superuser access to the database specified by MYSQL_DATABASE
-      - MYSQL_PASSWORD=${maraidb_pw} # Password you want to use for you MYSQL_USER (minimum 4 characters & non-alphanumeric passwords must be properly escaped)
     volumes:
      - '${mariadb_config}:/config'
-    # healthcheck:
-    #   test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 5
 
 
 # Tools

@@ -24,12 +24,22 @@ services:
     env_file:
        - .env
     ports:
-      - '${nginx_port1}:80'
-      #- '${nginx_port2}:443'
+      - 80:80
+      - 443:443
+      - '${nginx_port}:81'
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ='${time_zone}'
+      PUID: ${PUID}
+      PGID: ${PGID}
+      INITIAL_ADMIN_EMAIL: ${nginx_email}
+      INITIAL_ADMIN_PASSWORD: ${nginx_admin_pw}
+      DISABLE_IPV6: 'true'
+      # =====================================
+      # Postgres Config
+      POSTGRES_SERVER: ${nginx_db_server}
+      POSTGRES_USER: ${nginx_db_un}
+      POSTGRES_PASSWORD: ${nginx_db_pw}
+      POSTGRES_PORT: ${nginx_db_port}
+      POSTGRES_DB: ${nginx_db}
     volumes:
-    - '${nginx_config}:/etc/nginx/conf.d/default.conf'
-    - '${apache_site1_html}:/usr/local/apache2/htdocs/'
+    - '${nginx_data}:/data'
+    - '${nginx_letsencrypt}:/etc/letsencrypt'
