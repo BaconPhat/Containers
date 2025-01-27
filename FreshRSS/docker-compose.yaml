@@ -22,11 +22,16 @@ services:
     restart: unless-stopped
     env_file:
        - .env
+    logging:
+      options:
+        max-size: 10m
     ports:
       - '${freshrss_port}:80'
     environment:
       TZ: ${time_zone}
+      CRON_MIN: '*/30' # Cron job to scrape every 30 min
       PUID: ${PUID}
       PGID: ${PGID}
     volumes:
-      - '${freshrss_config}:/config'
+      - '${freshrss_config}:/var/www/FreshRSS/data'
+      - '${freshrss_ext}:/var/www/FreshRSS/extensions'
