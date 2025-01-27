@@ -38,4 +38,4 @@ services:
       # CPU_CORES: "4"
       # RAM_SIZE: "8G"
     volumes:
-      - '${windows_storge}:/data'
+      - '${windows_storage}:/data'
