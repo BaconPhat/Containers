@@ -29,7 +29,7 @@ services:
       - '${freshrss_port}:80'
     environment:
       TZ: ${time_zone}
-      CRON_MIN: '*/30' # Cron job to scrape every 30 min
+      CRON_MIN: '13,43'
       PUID: ${PUID}
       PGID: ${PGID}
     volumes:
