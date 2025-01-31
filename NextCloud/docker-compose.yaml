@@ -1,93 +1,60 @@
 ---
-version: '3'
+# ===========================================================================================
+# Title   NextCloud
+# Created By: PJ Guibord
+# Date 01/4/2025
+# Revision: n/a
+# Version: 1.0
+# URL: https://github.com/nextcloud/all-in-one/blob/main/compose.yaml
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
 
 services:
-  nextcloud:
-    image: nextcloud
-    container_name: nextcloud
-    restart: unless-stopped
-    networks: 
-      - cloud
-    depends_on:
-      - nextclouddb
-      - redis
-    ports:
-      - 8081:80
-    volumes:
-      - ./html:/var/www/html
-      - ./custom_apps:/var/www/html/custom_apps
-      - ./config:/var/www/html/config
-      - ./data:/var/www/html/data
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=dbpassword
-      - MYSQL_HOST=nextclouddb
-      - REDIS_HOST=redis
-
-  nextclouddb:
-    image: mariadb
-    container_name: nextcloud-db
-    restart: unless-stopped
-    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
-    networks: 
-      - cloud
-    volumes:
-      - ./nextclouddb:/var/lib/mysql
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
-      - MYSQL_RANDOM_ROOT_PASSWORD=true
-      - MYSQL_PASSWORD=dbpassword
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      
-  collabora:
-    image: collabora/code
-    container_name: collabora
-    restart: unless-stopped
-    networks: 
-      - cloud
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
-      - password=password
-      - username=nextcloud
-      - domain=example.com
-      - extra_params=--o:ssl.enable=true
-    ports:
-      - 9980:9980
-
-  redis:
+  nextcloud-redis:
+    container_name: nextcloud-redis
     image: redis:alpine
-    container_name: redis
-    volumes:
-      - ./redis:/data  
-    networks: 
-      - cloud
-  
-  nginx-proxy:
-    image: 'jc21/nginx-proxy-manager:latest'
-    container_name: nginx-proxy
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
     restart: unless-stopped
-    ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
-    volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
 
-networks:
-  cloud:
-    name: cloud
-    driver: bridge
+  nextcloud:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    env_file:
+       - .env
+    depends_on:
+      - nextcloud-redis
+    ports:
+     - '${nextcloud_port}:80'
+    environment:
+      TZ: America/Denver
+      REDIS_HOST: nextcloud-redis
+      NEXTCLOUD_ADMIN_USER: ${nextcloud_admin_un}
+      NEXTCLOUD_ADMIN_PASSWORD: ${nextcloud_admin_pw}
+      NEXTCLOUD_TRUSTED_DOMAINS: ${nextcloud_trusted_domain}
+      #=====================================
+      # Postgres Config
+      POSTGRES_HOST: ${nextcloud_db_server}
+      POSTGRES_DB: ${nextcloud_db}
+      POSTGRES_USER: ${nextcloud_db_un}
+      POSTGRES_PASSWORD: ${nextcloud_db_pw}
+      # =====================================
+      # Email Configuration
+      SMTP_HOST: ${smtp_host}
+      SMTP_PORT: ${smtp_port}
+      SMTP_SECURE: TLS
+      MAIL_FROM_ADDRESS: ${smtp_sender_name}
+      MAIL_DOMAIN: ${smtp_sender_email}
+      SMTP_NAME: ${smtp_un}
+      SMTP_PASSWORD: ${smtp_pw}
+    volumes:
+      - '${nextcloud_html}:/var/www/html/data/'
+      - '${nextcloud_config}:/var/www/html/config/'
+      - '${nextcloud_custom_apps_data}:/var/www/html/custom_apps'
