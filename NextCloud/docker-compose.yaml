@@ -22,6 +22,8 @@ services:
     container_name: nextcloud-redis
     image: redis:alpine
     restart: unless-stopped
+    ports:
+      - 6379:6379
 
   nextcloud:
     container_name: ${container_name}
@@ -31,10 +33,14 @@ services:
        - .env
     depends_on:
       - nextcloud-redis
+    #entrypoint: /cron.sh
+    logging:
+      options:
+         max-size: 50m
     ports:
      - '${nextcloud_port}:80'
     environment:
-      TZ: America/Denver
+      TZ: ${time_zone}
       REDIS_HOST: nextcloud-redis
       NEXTCLOUD_ADMIN_USER: ${nextcloud_admin_un}
       NEXTCLOUD_ADMIN_PASSWORD: ${nextcloud_admin_pw}
@@ -55,6 +61,12 @@ services:
       SMTP_NAME: ${smtp_un}
       SMTP_PASSWORD: ${smtp_pw}
     volumes:
-      - '${nextcloud_html}:/var/www/html/data/'
+      # - '${nextcloud_cron}:/cron.sh'
       - '${nextcloud_config}:/var/www/html/config/'
       - '${nextcloud_custom_apps_data}:/var/www/html/custom_apps'
+      - '${nextcloud_themes}:/var/www/html/themes'
+      - '${nextcloud_data}:/var/www/html/data/'
+      # - '${user1_spath}:${user1_cpath}'
+      # - '${user1_spics}:${user1_user1_cpics}'
+
+
