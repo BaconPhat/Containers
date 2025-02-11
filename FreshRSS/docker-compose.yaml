@@ -34,4 +34,3 @@ services:
       PGID: ${PGID}
     volumes:
       - '${freshrss_config}:/var/www/FreshRSS/data'
-      - '${freshrss_ext}:/var/www/FreshRSS/extensions'
