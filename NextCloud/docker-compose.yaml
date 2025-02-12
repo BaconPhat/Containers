@@ -9,6 +9,9 @@
 # ===========================================================================================
 # Revision History:
 #   - 1.0: Initial Release
+#
+# Todo:
+#   - User pictures sync
 # ===========================================================================================
 
 # docker run -p <HostPort:containerport> imagename:tag
@@ -33,7 +36,6 @@ services:
        - .env
     depends_on:
       - nextcloud-redis
-    #entrypoint: /cron.sh
     logging:
       options:
          max-size: 50m
@@ -61,12 +63,13 @@ services:
       SMTP_NAME: ${smtp_un}
       SMTP_PASSWORD: ${smtp_pw}
     volumes:
-      # - '${nextcloud_cron}:/cron.sh'
+      # NextCloud Base
       - '${nextcloud_config}:/var/www/html/config/'
       - '${nextcloud_custom_apps_data}:/var/www/html/custom_apps'
       - '${nextcloud_themes}:/var/www/html/themes'
       - '${nextcloud_data}:/var/www/html/data/'
-      # - '${user1_spath}:${user1_cpath}'
+      # User Files
+      - '${user1_spath}:${user1_cpath}'
       # - '${user1_spics}:${user1_user1_cpics}'
 
 
