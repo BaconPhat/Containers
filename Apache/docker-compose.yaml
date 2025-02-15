@@ -21,8 +21,6 @@ services:
     container_name: ${container_name}
     image:  ${image}
     restart: unless-stopped
-    env_file:
-       - .env
     ports:
     - '${apache_site1_port}:80'
     volumes:
