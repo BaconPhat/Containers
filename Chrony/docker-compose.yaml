@@ -15,23 +15,24 @@
 # Start containers:: 
 #   docker compose up --detach
 
+# Validation:
+# ntpdate -q <DOCKER_HOST_IP>
+
 
 services:
   chrony:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
-    env_file:
-       - .env
+    read_only: true
     ports:
       - 123:123/udp
     environment:
       - NTP_SERVERS=${time_sources}
+      - TZ=${timezone}
       - LOG_LEVEL=0
-      - TZ='${timezone}'
       - ENABLE_NTS=true
       - ENABLE_SYSCLK=true
-    read_only: true
     tmpfs:
       - /etc/chrony:rw,mode=1750
       - /run/chrony:rw,mode=1750
