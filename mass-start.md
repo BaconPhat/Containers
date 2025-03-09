@@ -1,9 +1,14 @@
-docker compose --file ./PostgreSQL/docker-compose.yaml up --detach
-docker compose --file ./Chrony/docker-compose.yaml up --detach
-docker compose --file ./Homer/docker-compose.yaml up --detach
-docker compose --file ./Portainer/docker-compose.yaml up --detach
-docker compose --file ./Mealie/docker-compose.yaml up --detach
-docker compose --file ./Apache/docker-compose.yaml up --detach
-docker compose --file ./DrawIO/docker-compose.yaml up --detach
-docker compose --file ./OpenSpeedTest/docker-compose.yaml up --detach
+docker compose --file ./Chrony/compose.yaml up --detach
+docker compose --file ./Nginx-Proxy/compose.yaml up --detach
+docker compose --file ./Pi-hole/compose.yaml up --detach
+docker compose --file ./PostgreSQL/compose.yaml up --detach
+docker compose --file ./NextCloud/compose.yaml up --detach
+docker compose --file ./Homer/compose.yaml up --detach
+docker compose --file ./Portainer/compose.yaml up --detach
+docker compose --file ./FreshRSS/compose.yaml up --detach
+docker compose --file ./Mealie/compose.yaml up --detach
+docker compose --file ./Apache/compose.yaml up --detach
+docker compose --file ./OpenSpeedTest/compose.yaml up --detach
+docker compose --file ./Speed-Tracker/compose.yaml up --detach
+
 
