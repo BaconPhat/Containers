@@ -28,8 +28,8 @@ services:
       - 443:443
       - '${nginx_port}:81'
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
+      # PUID: ${PUID}
+      # PGID: ${PGID}
       INITIAL_ADMIN_EMAIL: ${nginx_email}
       INITIAL_ADMIN_PASSWORD: ${nginx_admin_pw}
       DISABLE_IPV6: 'true'
