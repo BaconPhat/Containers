@@ -1,0 +1,61 @@
+---
+# ===========================================================================================
+# Title   OnlyOffice Document Server
+# Created By: PJ Guibord
+# Date 03/01/2025
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+
+  onlyoffice-rabbitmq:
+    container_name: onlyoffice-rabbitmq
+    image: ${image_rabbitmq}
+    restart: unless-stopped
+    expose:
+      - '5672'
+
+  onlyoffice:
+    container_name: onlyoffice
+    image: ${image_onlyoffice}
+    restart: unless-stopped
+    depends_on:
+      - onlyoffice-rabbitmq
+    # stdin_open: true
+    # stop_grace_period: 60s
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2'
+    #       memory: 50M
+    ports:
+      - '${openoffice_http}:80'
+      - '${openoffice_https}:443'
+    environment:
+      WOPI_ENABLED: true            # Web based editing
+      JWT_SECRET: ${jwt_secret}     # JSON Web Token validation.
+      # Postgres
+      DB_TYPE: ${db_type}
+      DB_HOST: ${db_host}
+      DB_PORT: ${db_port}
+      DB_NAME: ${db_name}
+      DB_USER: ${db_user}
+      DB_PWD: ${db_password}
+      AMQP_URI: 'amqp://guest:guest@onlyoffice-rabbitmq'
+    volumes:
+      - '${onlyoffice_cache}:/var/lib/onlyoffice/documentserver/App_Data/cache/files'
+      - '${onlyoffice_data}:/var/www/onlyoffice/Data'
+      - '${onlyoffice_certs}:/var/www/onlyoffice/Data/certs'
+      - '${onlyoffice_examples}:/var/www/onlyoffice/documentserver-example/public/files'
+      - '${onlyoffice_fonts}:/usr/share/fonts'
+      - '${onlyoffice_logs_letsencrypt}:/var/log/letsencrypt'
+      - '${onlyoffice_logs_onlyoffice}:/var/log/onlyoffice'
