@@ -18,10 +18,28 @@
 
 services:
   webesite1:
-    container_name: ${container_name}
+    container_name: ${container_name1}
     image:  ${image}
     restart: unless-stopped
     ports:
     - '${apache_site1_port}:80'
     volumes:
       - '${apache_site1_html}:/usr/local/apache2/htdocs/'
+  
+  webesite2:
+    container_name: ${container_name2}
+    image:  ${image}
+    restart: unless-stopped
+    ports:
+    - '${apache_site2_port}:80'
+    volumes:
+      - '${apache_site2_html}:/usr/local/apache2/htdocs/'
+      
+  webesite3:
+    container_name: ${container_name3}
+    image:  ${image}
+    restart: unless-stopped
+    ports:
+    - '${apache_site3_port}:80'
+    volumes:
+      - '${apache_site3_html}:/usr/local/apache2/htdocs/'
