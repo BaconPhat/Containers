@@ -72,7 +72,7 @@ services:
       - '${nextcloud_data}:/var/www/html/data/'
       # User Files
       - '${user1_spath}:${user1_cpath}'
-      # - '${user1_spics}:${user1_user1_cpics}'
+      - '${user1_spics}:${user1_cpics}'
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
       interval: 30s
