@@ -6,8 +6,8 @@ docker system prune --all --force
 
 ForEach ($Image in $Containers){
 
-    cd $Image
+    Set-Location $Image
     docker compose pull
-    cd ..
+    Set-Location ..
 
 }
