@@ -70,6 +70,7 @@ services:
       - '${nextcloud_custom_apps_data}:/var/www/html/custom_apps'
       - '${nextcloud_themes}:/var/www/html/themes'
       - '${nextcloud_data}:/var/www/html/data/'
+      - '${nextcloud_tempdir}:/tmp/nextcloudtemp/'
       # User Files
       - '${user1_spath}:${user1_cpath}'
       - '${user1_spics}:${user1_cpics}'
