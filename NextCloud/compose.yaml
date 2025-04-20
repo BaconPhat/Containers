@@ -67,8 +67,8 @@ services:
     volumes:
       # NextCloud Base
       - '${nextcloud_config}:/var/www/html/config/'
-      - '${nextcloud_custom_apps_data}:/var/www/html/custom_apps'
-      - '${nextcloud_themes}:/var/www/html/themes'
+      - '${nextcloud_custom_apps_data}:/var/www/html/custom_apps/'
+      - '${nextcloud_themes}:/var/www/html/themes/'
       - '${nextcloud_data}:/var/www/html/data/'
       - '${nextcloud_tempdir}:/tmp/nextcloudtemp/'
       # User Files
