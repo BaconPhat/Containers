@@ -43,12 +43,3 @@ services:
     - '${apache_site3_port}:80'
     volumes:
       - '${apache_site3_html}:/usr/local/apache2/htdocs/'
-      
-  webesite4:
-    container_name: ${container_name4}
-    image:  ${image}
-    restart: unless-stopped
-    ports:
-    - '${apache_site4_port}:80'
-    volumes:
-      - '${apache_site4_html}:/usr/local/apache2/htdocs/'
