@@ -1,0 +1,37 @@
+---
+# ===========================================================================================
+# Title   Joplin
+# Created By: PJ Guibord
+# Date 04/27/2025
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  joplin-server:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    ports:
+      - "${joplin_port}:22300"
+    environment:
+      - APP_PORT=22300
+      - APP_BASE_URL=${joplin_base_url}
+      # =====================================
+      # Postgres Config
+      - DB_CLIENT=pg
+      - POSTGRES_DATABASE=${joplin_db}
+      - POSTGRES_USER=${joplin_db_un}
+      - POSTGRES_PASSWORD=${joplin_db_pw}
+      - POSTGRES_PORT=${joplin_db_port}
+      - POSTGRES_HOST=${joplin_db_server}
+    volumes:
+      - ${joplin_data}:/etc/joplin
