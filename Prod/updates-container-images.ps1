@@ -1,4 +1,4 @@
-Set-Location -Path S:\Repos\Containers -PassThru
+Set-Location -Path . -PassThru
 
 $Containers = Get-Childitem -Directory | ForEach-Object { $_.Name}
 
