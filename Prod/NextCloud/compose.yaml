@@ -30,7 +30,10 @@ services:
     image: redis:alpine
     restart: unless-stopped
     ports:
-      - 6379:6379
+      - ${redis_port}:6379
+    volumes:
+      - ${cache}:/data
+    command: redis-server --requirepass ${redis_password}
 
   nextcloud:
     container_name: nextcloud
@@ -46,6 +49,7 @@ services:
     environment:
       TZ: ${time_zone}
       REDIS_HOST: nextcloud-redis
+      REDIS_HOST_PASSWORD: ${redis_password}
       NEXTCLOUD_ADMIN_USER: ${nextcloud_admin_un}
       NEXTCLOUD_ADMIN_PASSWORD: ${nextcloud_admin_pw}
       NEXTCLOUD_TRUSTED_DOMAINS: ${nextcloud_trusted_domain}
@@ -74,6 +78,20 @@ services:
       # User Files
       - '${user1_spath}:${user1_cpath}'
       - '${user1_spics}:${user1_cpics}'
+      - '${user2_spath}:${user2_cpath}'
+      - '${user2_spics}:${user2_cpics}'
+      - '${user3_spath}:${user3_cpath}'
+      - '${user3_spics}:${user3_cpics}'
+      - '${user4_spath}:${user4_cpath}'
+      - '${user4_spics}:${user4_cpics}'
+      - '${user5_spath}:${user5_cpath}'
+      - '${user5_spics}:${user5_cpics}'
+      # - '${user6_spath}:${user3_cpath}'
+      # - '${user6_spics}:${user3_cpics}'
+      # - '${user7_spath}:${user3_cpath}'
+      # - '${user7_spics}:${user3_cpics}'
+      - '${user8_spath}:${user8_cpath}'
+      - '${user9_spath}:${user9_cpath}'
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
       interval: 30s
