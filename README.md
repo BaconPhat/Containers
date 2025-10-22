@@ -24,7 +24,7 @@ Landing screen for all the homelab things. I use this as the starting page to ge
 Locally store family recipe's that were on hand-written cards (in case of fire or something). We also have been acumulating a ot of random fantastic recipe's online and unfortunatly several of them are being decomm'd so I want to store them locally.
 
 ## NextCloud
-Used heavily by my family as I don't want to pay for subscription fees with Cloud providers to store/share files.
+Used heavily by my family as I don't want to pay for subscription fees with Cloud providers to store/share files. I have all our cell phones syncronizing pictures directly into my server that I backup regularly, as well as my extended family using it as their off-site backup solution again, free no subscription fees.
 
 ## Nginx Proxy
 Used for hosting various sites both internal and external, routing.
