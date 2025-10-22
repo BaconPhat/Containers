@@ -27,7 +27,7 @@ Locally store family recipe's that were on hand-written cards (in case of fire o
 Used heavily by my family as I don't want to pay for subscription fees with Cloud providers to store/share files. I have all our cell phones syncronizing pictures directly into my server that I backup regularly, as well as my extended family using it as their off-site backup solution again, free no subscription fees.
 
 ## Nginx Proxy
-Used for hosting various sites both internal and external, routing.
+Used for hosting various sites both internal and external, reverse-proxy, etc.
 
 ## Open Speed Test
 This is a really simple speed test solution for my internal home network, using HTML5 (Finally!).  I use this to test client connectivitiy with my cell phones/tablets/laptops when I am accused of the network being down. This is a self-hosted solution, which is now getting line-rate on the container all the way to my gateway (hard-wire), which I then use for interal testing to validate my network is solid.
