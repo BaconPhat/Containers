@@ -8,6 +8,7 @@
 # ===========================================================================================
 # Revision History:
 #   - 1.0: Initial Release
+#   - 1.1: Removed tempfs reference, disable system clock sync
 # ===========================================================================================
 
 # docker run -p <HostPort:containerport> imagename:tag
@@ -28,7 +29,8 @@ services:
     ports:
       - 123:123/udp
     environment:
-      - NTP_SERVERS=${time_sources}
-      - TZ=${timezone}
-      - LOG_LEVEL=0
-      - ENABLE_NTS=true # Used for upstream NTP authentication
+      NTP_SERVERS: ${time_sources}
+      TZ: ${timezone}
+      LOG_LEVEL: 0
+      ENABLE_SYSCLK: "false" # Disable system clock synchronization
+      ENABLE_NTS: true # Used for upstream NTP authentication
