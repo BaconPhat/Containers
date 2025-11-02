@@ -32,7 +32,3 @@ services:
       - TZ=${timezone}
       - LOG_LEVEL=0
       - ENABLE_NTS=true # Used for upstream NTP authentication
-    tmpfs:
-      - /etc/chrony:rw,mode=1750
-      - /run/chrony:rw,mode=1750
-      - /var/lib/chrony:rw,mode=1750
