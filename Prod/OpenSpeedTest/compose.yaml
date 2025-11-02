@@ -21,8 +21,6 @@ services:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
-    # env_file:
-    #    - .env
     ports:
       - '${openspeedtest_port}:3000'
     environment:
