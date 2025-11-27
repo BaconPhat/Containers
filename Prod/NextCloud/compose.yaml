@@ -23,6 +23,15 @@
 # Login with www-data NOT root
 # php occ ....
 
+# Maintanence Activities:
+# docker exec -u www-data nextcloud php /var/www/html/cron.php
+# docker exec -u www-data nextcloud php /var/www/html/occ app:disable dashboard
+# docker exec -u www-data nextcloud php /var/www/html/occ files:scan --all
+# docker exec -u www-data nextcloud php /var/www/html/occ maintenance:repair --include-expensive
+# docker exec -u www-data nextcloud php /var/www/html/occ db:add-missing-indices
+# docker exec -u www-data nextcloud php /var/www/html/occ upgrade
+# docker exec -u www-data nextcloud php /var/www/html/occ preview:generate-all -vvv
+
 
 services:
   nextcloud-redis:
