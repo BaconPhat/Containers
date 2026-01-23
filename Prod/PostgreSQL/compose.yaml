@@ -15,6 +15,10 @@
 # Start containers:: 
 #   docker compose up --detach
 
+# UPGRADE NOTE: After the upgrade, you need to log into pgAdmin and run:
+# ALTER DATABASE <database> REFRESH COLLATION VERSION;
+# For each database to update the collation version to match the new PostgreSQL version. Look for additional errors in the docker logs
+
 
 services:
 # DB
