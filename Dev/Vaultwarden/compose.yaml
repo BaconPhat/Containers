@@ -1,0 +1,67 @@
+---
+# ===========================================================================================
+# Title   Vaultwarden
+# Created By: PJ Guibord
+# Date 02/6/2026
+# Revision: N/A
+# Version: 1.0
+# LINKS: https://docs.mealie.io/documentation/getting-started/installation/backend-config/
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  Vaultwarden:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    ports:
+      - '${mealie_port}:9000'
+    environment:
+      API_DOCS: 'false'
+      ALLOW_SIGNUP: 'false'
+      TZ: ${time_zone}
+      BASE_URL: ${mealie_url}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      DEFAULT_GROUP: ${default_group}
+      DEFAULT_HOUSEHOLD: ${default_household}
+      DAILY_SCHEDULE_TIME: '09:00'
+      SECURITY_MAX_LOGIN_ATTEMPTS: '5'
+      # TLS_CERTIFICATE_PATH: ?
+      # TLS_PRIVATE_KEY_PATH: ??
+      # =====================================
+      # Postgres Config
+      DB_ENGINE: postgres
+      POSTGRES_DB: ${mealie_db}
+      POSTGRES_USER: ${mealie_db_un}
+      POSTGRES_PASSWORD: ${mealie_db_pw}
+      POSTGRES_SERVER: ${mealie_db_server}
+      POSTGRES_PORT: ${mealie_db_port}
+      # =====================================
+      # Email Configuration
+      SMTP_HOST: ${smtp_host}
+      SMTP_PORT: ${smtp_port}
+      SMTP_AUTH_STRATEGY: TLS # Options: 'TLS', 'SSL', 'NONE'
+      SMTP_FROM_NAME: ${smtp_sender_name}
+      SMTP_FROM_EMAIL: ${smtp_sender_email} 
+      SMTP_USER: ${smtp_un}
+      SMTP_PASSWORD: ${smtp_pw}
+      # =====================================
+      # Disable OpenAI Use
+      OPENAI_BASE_URL: 'null'
+      OPENAI_API_KEY: 'null'
+      OPENAI_ENABLE_IMAGE_SERVICES: 'false'
+      OPENAI_SEND_DATABASE_DATA: 'false'
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    volumes:
+      - '${mealie_config}:/app/data/'
