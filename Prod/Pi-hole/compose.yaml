@@ -26,20 +26,21 @@ services:
        - .env
     ports:
       # WebUI
-      - ${pihole_port}:80/tcp
+      # - ${pihole_http}:80/tcp
+      - ${pihole_https}:443/tcp
       # DNS
       - 53:53/tcp
       - 53:53/udp
     environment:
       TZ: ${time_zone}
-      WEBPASSWORD: ${pihole_pass}
-      ServerIP: ${pihole_published_ip}
-      PIHOLE_DNS_: ${pihole_upstream_dns}
-      TEMPERATUREUNIT: f
-      WEBUIBOXEDLAYOUT: traditional
-      # WEBTHEME: "lcars"
-      DNSSEC: True
+      FTLCONF_webserver_api_password: ${pihole_pass}
+      FTLCONF_dns_upstreams: ${pihole_upstream_dns}
+      FTLCONF_dns_dnssec: true
     volumes:
       - '${pihole_config}/etc-pihole:/etc/pihole'
       - '${pihole_config}/etc-dnsmasq.d:/etc/dnsmasq.d'
-      # - '${pihole_config}/lighttpd:/etc/lighttpd'
+    cap_add:
+      - SYS_NICE # Grants the CAP_SYS_NICE capability to the container, 
+      # allowing it to set process priorities and scheduling policies. 
+      # This is necessary for Pi-hole to function properly, as it may need 
+      # to adjust its own process priority for optimal performance.
