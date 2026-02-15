@@ -17,51 +17,45 @@
 #   docker compose up --detach
 
 services:
-  outline:
-    container_name: ${container_name}
-    image: ${image}
+  outline-redis:
+    container_name: outline_redis
+    image: redis:alpine
+    env_file: .env
     restart: unless-stopped
     ports:
-      - '${mealie_port}:9000'
-    environment:
-      API_DOCS: 'false'
-      ALLOW_SIGNUP: 'false'
-      TZ: ${time_zone}
-      BASE_URL: ${mealie_url}
-      PUID: ${PUID}
-      PGID: ${PGID}
-      DEFAULT_GROUP: ${default_group}
-      DEFAULT_HOUSEHOLD: ${default_household}
-      DAILY_SCHEDULE_TIME: '09:00'
-      SECURITY_MAX_LOGIN_ATTEMPTS: '5'
-      # TLS_CERTIFICATE_PATH: ?
-      # TLS_PRIVATE_KEY_PATH: ??
-      # =====================================
-      # Postgres Config
-      DB_ENGINE: postgres
-      POSTGRES_DB: ${mealie_db}
-      POSTGRES_USER: ${mealie_db_un}
-      POSTGRES_PASSWORD: ${mealie_db_pw}
-      POSTGRES_SERVER: ${mealie_db_server}
-      POSTGRES_PORT: ${mealie_db_port}
-      # =====================================
-      # Email Configuration
-      SMTP_HOST: ${smtp_host}
-      SMTP_PORT: ${smtp_port}
-      SMTP_AUTH_STRATEGY: TLS # Options: 'TLS', 'SSL', 'NONE'
-      SMTP_FROM_NAME: ${smtp_sender_name}
-      SMTP_FROM_EMAIL: ${smtp_sender_email} 
-      SMTP_USER: ${smtp_un}
-      SMTP_PASSWORD: ${smtp_pw}
-      # =====================================
-      # Disable OpenAI Use
-      OPENAI_BASE_URL: 'null'
-      OPENAI_API_KEY: 'null'
-      OPENAI_ENABLE_IMAGE_SERVICES: 'false'
-      OPENAI_SEND_DATABASE_DATA: 'false'
-    deploy:
-      resources:
-        limits:
-          memory: 1000M
+      - ${redis_port}:6379
     volumes:
-      - '${mealie_config}:/app/data/'
+      - ${outline_cache}:/data
+
+  outline:
+    container_name: outline_wiki
+    image: ${image}
+    env_file: .env
+    restart: unless-stopped
+    depends_on:
+      - outline-redis
+    ports:
+      - '${outline_port}:3000'
+    environment:
+      PGSSLMODE: disable
+      URL: ${outline_url}
+      WEB_CONCURRENCY: '2'
+      REDIS_URL: 'redis://outline-redis:${redis_port}'
+      SECRET_KEY: ${outline_key}
+      UTILS_SECRET: ${outline_secret}
+      FILE_STORAGE: local
+      ENABLE_UPDATES: 'false'
+      # Database settings      
+      DATABASE_URL: 'postgres://${outline_db_un}:${outline_db_pw}@${outline_db_server}:${outline_db_port}/${outline_db}'
+      # Email settings for notifications
+      # SMTP_HOST: ${smtp_host}
+      # SMTP_PORT: ${smtp_port}
+      # SMTP_TLS_CIPHERS: 'SSLv1.2'
+      # SMTP_SECURE: false
+      # #SMTP_AUTH_STRATEGY: TLS
+      # #SMTP_FROM_NAME: ${smtp_sender_name}
+      # SMTP_FROM_EMAIL: ${smtp_sender_email}
+      # SMTP_USER: ${smtp_un}
+      # SMTP_PASSWORD: ${smtp_pw}
+    volumes:
+      - '${outline_data}:/var/lib/outline/data'
