@@ -2,10 +2,9 @@
 # ===========================================================================================
 # Title   Vaultwarden
 # Created By: PJ Guibord
-# Date 02/6/2026
+# Date 02/15/2026
 # Revision: N/A
 # Version: 1.0
-# LINKS: https://docs.mealie.io/documentation/getting-started/installation/backend-config/
 # ===========================================================================================
 # Revision History:
 #   - 1.0: Initial Release
@@ -22,46 +21,39 @@ services:
     image: ${image}
     restart: unless-stopped
     ports:
-      - '${mealie_port}:9000'
+      - '${vaultwarden_port}:80'
     environment:
-      API_DOCS: 'false'
-      ALLOW_SIGNUP: 'false'
       TZ: ${time_zone}
-      BASE_URL: ${mealie_url}
-      PUID: ${PUID}
-      PGID: ${PGID}
-      DEFAULT_GROUP: ${default_group}
-      DEFAULT_HOUSEHOLD: ${default_household}
-      DAILY_SCHEDULE_TIME: '09:00'
-      SECURITY_MAX_LOGIN_ATTEMPTS: '5'
-      # TLS_CERTIFICATE_PATH: ?
-      # TLS_PRIVATE_KEY_PATH: ??
+      DOMAIN: ${vaultwarden_url}
+      ENABLE_WEBSOCKET: false
+      ADMIN_TOKEN: ${admin_token}
+      ADMIN_RATELIMIT_MAX_BURST: 10
+      ADMIN_RATELIMIT_SECONDS: 60
+      SENDS_ALLOWED: true
+      LOGIN_RATELIMIT_MAX_BURST: 10
+      LOGIN_RATELIMIT_SECONDS: 60
+      INCOMPLETE_2FA_TIME_LIMIT: 3
+      SIGNUPS_ALLOWED: true
+      SIGNUPS_VERIFY: true
+      SIGNUPS_VERIFY_RESEND_TIME: 3600
+      SIGNUPS_VERIFY_RESEND_LIMIT: 5
+      INVITATION_EXPIRATION_HOURS: 1
+      EMERGENCY_ACCESS_ALLOWED: true
+      WEB_VAULT_ENABLED: true
+
       # =====================================
       # Postgres Config
-      DB_ENGINE: postgres
-      POSTGRES_DB: ${mealie_db}
-      POSTGRES_USER: ${mealie_db_un}
-      POSTGRES_PASSWORD: ${mealie_db_pw}
-      POSTGRES_SERVER: ${mealie_db_server}
-      POSTGRES_PORT: ${mealie_db_port}
+      DATABASE_URL: 'postgresql://${vaultwarden_db_un}:${vaultwarden_db_pw}@${vaultwarden_db_server}:${vaultwarden_db_port}/${vaultwarden_db}'
+      DATABASE_MIN_CONNS: 1
+      DATABASE_MAX_CONNS=: 5
       # =====================================
       # Email Configuration
       SMTP_HOST: ${smtp_host}
       SMTP_PORT: ${smtp_port}
-      SMTP_AUTH_STRATEGY: TLS # Options: 'TLS', 'SSL', 'NONE'
-      SMTP_FROM_NAME: ${smtp_sender_name}
+      SMTP_FROM: ${smtp_sender_name}
       SMTP_FROM_EMAIL: ${smtp_sender_email} 
-      SMTP_USER: ${smtp_un}
+      SMTP_USERNAME: ${smtp_un}
       SMTP_PASSWORD: ${smtp_pw}
-      # =====================================
-      # Disable OpenAI Use
-      OPENAI_BASE_URL: 'null'
-      OPENAI_API_KEY: 'null'
-      OPENAI_ENABLE_IMAGE_SERVICES: 'false'
-      OPENAI_SEND_DATABASE_DATA: 'false'
-    deploy:
-      resources:
-        limits:
-          memory: 1000M
+      SMTP_SECURITY: starttls
     volumes:
-      - '${mealie_config}:/app/data/'
+      - '${vaultwarden_config}:/data/'
