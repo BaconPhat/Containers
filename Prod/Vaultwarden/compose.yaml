@@ -1,0 +1,59 @@
+---
+# ===========================================================================================
+# Title   Vaultwarden
+# Created By: PJ Guibord
+# Date 02/15/2026
+# Revision: N/A
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  Vaultwarden:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    ports:
+      - '${vaultwarden_port}:80'
+    environment:
+      TZ: ${time_zone}
+      DOMAIN: ${vaultwarden_url}
+      ENABLE_WEBSOCKET: false
+      ADMIN_TOKEN: ${admin_token}
+      ADMIN_RATELIMIT_MAX_BURST: 10
+      ADMIN_RATELIMIT_SECONDS: 60
+      SENDS_ALLOWED: true
+      LOGIN_RATELIMIT_MAX_BURST: 10
+      LOGIN_RATELIMIT_SECONDS: 60
+      INCOMPLETE_2FA_TIME_LIMIT: 3
+      SIGNUPS_ALLOWED: true
+      SIGNUPS_VERIFY: true
+      SIGNUPS_VERIFY_RESEND_TIME: 3600
+      SIGNUPS_VERIFY_RESEND_LIMIT: 5
+      INVITATION_EXPIRATION_HOURS: 1
+      EMERGENCY_ACCESS_ALLOWED: true
+      WEB_VAULT_ENABLED: true
+
+      # =====================================
+      # Postgres Config
+      DATABASE_URL: 'postgresql://${vaultwarden_db_un}:${vaultwarden_db_pw}@${vaultwarden_db_server}:${vaultwarden_db_port}/${vaultwarden_db}'
+      DATABASE_MIN_CONNS: 1
+      DATABASE_MAX_CONNS=: 5
+      # =====================================
+      # Email Configuration
+      SMTP_HOST: ${smtp_host}
+      SMTP_PORT: ${smtp_port}
+      SMTP_FROM: ${smtp_sender_name}
+      SMTP_FROM_EMAIL: ${smtp_sender_email} 
+      SMTP_USERNAME: ${smtp_un}
+      SMTP_PASSWORD: ${smtp_pw}
+      SMTP_SECURITY: starttls
+    volumes:
+      - '${vaultwarden_config}:/data/'
