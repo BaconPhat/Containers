@@ -1,0 +1,30 @@
+---
+# ===========================================================================================
+# Title   Redis
+# Created By: PJ Guibord
+# Date 03/01/2026
+# Revision: n/a
+# Version: 1.0
+# URL: n/a
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+
+
+services:
+  redis:
+    container_name: nextcloud-redis
+    image: redis:alpine
+    restart: unless-stopped
+    ports:
+      - ${redis_port}:6379
+    volumes:
+      - ${cache}:/data
+    command: redis-server --requirepass ${redis_password}
