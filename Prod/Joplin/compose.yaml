@@ -21,6 +21,8 @@ services:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
+    networks: 
+      - joplin_net
     ports:
       - '${joplin_port}:22300'
     environment:
@@ -46,3 +48,8 @@ services:
       MAILER_SECURITY: starttls
       MAILER_NOREPLY_NAME: 'Joplin Server'
       MAILER_NOREPLY_EMAIL: ${smtp_un}
+
+networks:
+  joplin_net:
+    name: joplin_net
+    driver: bridge
