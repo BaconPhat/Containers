@@ -24,6 +24,9 @@
 # php occ ....
 
 # Maintanence Activities:
+# docker exec -u www-data nextcloud php /var/www/html/occ maintenance:mode --on
+# docker exec -u www-data nextcloud php /var/www/html/occ maintenance:mode --off
+
 # docker exec -u www-data nextcloud php /var/www/html/cron.php
 # docker exec -u www-data nextcloud php /var/www/html/occ app:disable dashboard
 # docker exec -u www-data nextcloud php /var/www/html/occ files:scan --all
@@ -34,31 +37,23 @@
 
 
 services:
-  nextcloud-redis:
-    container_name: nextcloud-redis
-    image: redis:alpine
-    restart: unless-stopped
-    ports:
-      - ${redis_port}:6379
-    volumes:
-      - ${cache}:/data
-    command: redis-server --requirepass ${redis_password}
-
   nextcloud:
     container_name: nextcloud
     image: ${image}
     restart: unless-stopped
-    depends_on:
-      - nextcloud-redis
+    # depends_on:
+    #   - nextcloud-redis
     logging:
       options:
          max-size: 50m
+    networks: 
+      - nextcloud_core
     ports:
      - '${nextcloud_port}:80'
     environment:
       TZ: ${time_zone}
-      REDIS_HOST: nextcloud-redis
-      REDIS_HOST_PASSWORD: ${redis_password}
+      # REDIS_HOST: nextcloud-redis
+      # REDIS_HOST_PASSWORD: ${redis_password}
       NEXTCLOUD_ADMIN_USER: ${nextcloud_admin_un}
       NEXTCLOUD_ADMIN_PASSWORD: ${nextcloud_admin_pw}
       NEXTCLOUD_TRUSTED_DOMAINS: ${nextcloud_trusted_domain}
@@ -106,3 +101,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+networks:
+  nextcloud_core:
+    name: nextcloud_core
+    driver: bridge
