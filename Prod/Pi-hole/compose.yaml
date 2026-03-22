@@ -31,6 +31,8 @@ services:
       # DNS
       - 53:53/tcp
       - 53:53/udp
+    networks:
+      - pihole_net
     environment:
       TZ: ${time_zone}
       FTLCONF_webserver_api_password: ${pihole_pass}
@@ -40,7 +42,30 @@ services:
       - '${pihole_config}/etc-pihole:/etc/pihole'
       - '${pihole_config}/etc-dnsmasq.d:/etc/dnsmasq.d'
     cap_add:
-      - SYS_NICE # Grants the CAP_SYS_NICE capability to the container, 
-      # allowing it to set process priorities and scheduling policies. 
-      # This is necessary for Pi-hole to function properly, as it may need 
-      # to adjust its own process priority for optimal performance.
+      - SYS_NICE  # Grants the CAP_SYS_NICE capability to the container, allowing it to set process
+                  # priorities and scheduling policies. This is necessary for Pi-hole to function properly, 
+                  # as it may need to adjust its own process priority for optimal performance.
+      - NET_ADMIN # Grants the CAP_NET_ADMIN capability to the container, allowing it to perform various 
+                  # network-related operations.
+    healthcheck:
+      disable: false
+      test:
+        [
+          "CMD",
+          "dig",
+          "+short",
+          "+norecurse",
+          "+retry=0",
+          "@127.0.0.1",
+          "pi.hole",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+      start_interval: 5s
+
+networks:
+  pihole_net:
+    name: pihole_net
+    driver: bridge
