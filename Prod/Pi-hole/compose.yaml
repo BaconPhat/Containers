@@ -24,6 +24,7 @@ services:
     restart: unless-stopped
     env_file:
        - .env
+    hostname: ${hostname}
     ports:
       # WebUI
       # - ${pihole_http}:80/tcp
