@@ -47,7 +47,7 @@ services:
       options:
          max-size: 50m
     networks: 
-      - nextcloud_core
+      - nextcloud_net
     ports:
      - '${nextcloud_port}:80'
     environment:
@@ -101,8 +101,9 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      
 
 networks:
-  nextcloud_core:
-    name: nextcloud_core
+  nextcloud_net:
+    name: nextcloud_net
     driver: bridge
