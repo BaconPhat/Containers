@@ -26,11 +26,26 @@ services:
     image: ${image}
     restart: unless-stopped
     read_only: true
+    env_file:
+       - .env
     ports:
       - 123:123/udp
+    networks:
+      - pihole_net
     environment:
       NTP_SERVERS: ${time_sources}
       TZ: ${timezone}
       LOG_LEVEL: 0
       ENABLE_SYSCLK: "false" # Disable system clock synchronization
       ENABLE_NTS: true # Used for upstream NTP authentication
+    healthcheck:
+      test: ["CMD", "chronyc", "tracking"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  pihole_net:
+    name: chrony_net
+    driver: bridge
