@@ -27,7 +27,6 @@ services:
     hostname: ${hostname}
     ports:
       # WebUI
-      # - ${pihole_http}:80/tcp
       - ${pihole_https}:443/tcp
       # DNS
       - 53:53/tcp
@@ -36,9 +35,14 @@ services:
       - pihole_net
     environment:
       TZ: ${time_zone}
+      PIHOLE_UID: '1000'
+      PIHOLE_GID: '1000'
       FTLCONF_webserver_api_password: ${pihole_pass}
       FTLCONF_dns_upstreams: ${pihole_upstream_dns}
+      FTLCONF_dns_domain_name: ${pihole_fqdn}
+      FTLCONF_dns_local_dns: ${pihole_local_dns}
       FTLCONF_dns_dnssec: true
+      FTLCONF_dns_listeningMode: 'ALL'
     volumes:
       - '${pihole_config}/etc-pihole:/etc/pihole'
       - '${pihole_config}/etc-dnsmasq.d:/etc/dnsmasq.d'
