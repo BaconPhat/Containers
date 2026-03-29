@@ -21,7 +21,7 @@ services:
     image: construct:latest
     restart: unless-stopped
     ports:
-      - 22:22/tcp
+      - 2289:22/tcp
     networks:
       - construct_net
     
