@@ -40,7 +40,6 @@ services:
       FTLCONF_webserver_api_password: ${pihole_pass}
       FTLCONF_dns_upstreams: ${pihole_upstream_dns}
       FTLCONF_dns_domain_name: ${pihole_fqdn}
-      FTLCONF_dns_local_dns: ${pihole_local_dns}
       FTLCONF_dns_dnssec: true
       FTLCONF_dns_listeningMode: 'ALL'
     volumes:
