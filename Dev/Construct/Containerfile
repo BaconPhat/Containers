@@ -1,0 +1,21 @@
+# podman build --tag baconphat/construct:latest --pull=false  .
+# docker push baconphat/construct
+
+FROM ubuntu:24.04
+
+# Install necessary packages
+RUN apt-get update && \
+    apt-get install -y openssh-server
+
+# Add init user for initial ssh connection
+RUN sudo useradd init && \
+    echo "init:th3-Construct" | chpasswd && \
+    usermod -aG sudo init
+
+# Set up SSH
+RUN service ssh start
+
+# Expose SSH port
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd", "-D"]

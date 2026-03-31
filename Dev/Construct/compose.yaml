@@ -1,0 +1,32 @@
+---
+# ===========================================================================================
+# Title   Construct
+# Created By: PJ Guibord
+# Date 03/26/2026
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release - Ubuntu base image for testing Ansible plabooks
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  construct:
+    container_name: construct
+    image: construct:latest
+    restart: unless-stopped
+    ports:
+      - 2289:22/tcp
+    networks:
+      - construct_net
+    
+
+networks:
+  construct_net:
+    name: construct_net
+    driver: bridge
