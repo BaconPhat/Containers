@@ -1,11 +1,11 @@
 ---
 # ===========================================================================================
-# Title   Redis
+# Title   Dockge
 # Created By: PJ Guibord
-# Date 03/01/2026
-# Revision: n/a
+# Date 04/01/2026
+# Revision: N/A
 # Version: 1.0
-# URL: n/a
+# LINKS: 
 # ===========================================================================================
 # Revision History:
 #   - 1.0: Initial Release
@@ -16,16 +16,23 @@
 # Start containers:: 
 #   docker compose up --detach
 
-
-
 services:
-  redis:
-    container_name: redis
-    image: redis:alpine
+
+  dockge:
+    container_name: ${container_name}
+    image: ${image}
     restart: unless-stopped
+    networks: 
+      - dockge_net
     ports:
-      - 6379:6379
-    command: redis-server --requirepass ${redis_password}
+      - '${dockge_port}:5001/tcp'
+    environment:
+      DOCKGE_STACKS_DIR: '/opt/stacks'
     volumes:
-      - ${cache}:/data
-   
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/app/data
+
+networks:
+  dockge_net:
+    name: dockge_net
+    driver: bridge
