@@ -23,7 +23,7 @@ services:
     image: ${image}
     restart: unless-stopped
     env_file:
-       - .env
+      - .env
     hostname: ${hostname}
     ports:
       # WebUI
