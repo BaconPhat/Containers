@@ -34,12 +34,13 @@
 # docker exec -u www-data nextcloud php /var/www/html/occ db:add-missing-indices
 # docker exec -u www-data nextcloud php /var/www/html/occ upgrade
 # docker exec -u www-data nextcloud php /var/www/html/occ preview:generate-all -vvv
+# docker exec -u www-data nextcloud php /var/www/html/occ app_api:daemon:register deploy-daemon "Deploy Daemon" docker-install http npipe:////./pipe/docker_engine https://cloud.guibord.org
 
 
 services:
   nextcloud:
     container_name: nextcloud
-    image: ${image}
+    image: ${image1}
     restart: unless-stopped
     # depends_on:
     #   - nextcloud-redis
@@ -63,15 +64,6 @@ services:
       POSTGRES_DB: ${nextcloud_db}
       POSTGRES_USER: ${nextcloud_db_un}
       POSTGRES_PASSWORD: ${nextcloud_db_pw}
-      # =====================================
-      # Email Configuration
-      SMTP_HOST: ${smtp_host}
-      SMTP_PORT: ${smtp_port}
-      SMTP_SECURE: TLS
-      MAIL_FROM_ADDRESS: ${smtp_sender_name}
-      MAIL_DOMAIN: ${smtp_sender_email}
-      SMTP_NAME: ${smtp_un}
-      SMTP_PASSWORD: ${smtp_pw}
     volumes:
       # NextCloud Base
       - '${nextcloud_config}:/var/www/html/config/'
@@ -81,15 +73,15 @@ services:
       - '${nextcloud_tempdir}:/tmp/nextcloudtemp/'
       # User Files
       - '${user1_spath}:${user1_cpath}'
-      - '${user1_spics}:${user1_cpics}'
+      #- '${user1_spics}:${user1_cpics}'
       - '${user2_spath}:${user2_cpath}'
-      - '${user2_spics}:${user2_cpics}'
+      #- '${user2_spics}:${user2_cpics}'
       - '${user3_spath}:${user3_cpath}'
-      - '${user3_spics}:${user3_cpics}'
+      #- '${user3_spics}:${user3_cpics}'
       - '${user4_spath}:${user4_cpath}'
-      - '${user4_spics}:${user4_cpics}'
+      #- '${user4_spics}:${user4_cpics}'
       - '${user5_spath}:${user5_cpath}'
-      - '${user5_spics}:${user5_cpics}'
+      #- '${user5_spics}:${user5_cpics}'
       # - '${user6_spath}:${user3_cpath}'
       # - '${user6_spics}:${user3_cpics}'
       # - '${user7_spath}:${user3_cpath}'
@@ -102,6 +94,19 @@ services:
       timeout: 10s
       retries: 3
       
+  
+  # nextcloud-whiteboard-server:
+  #   container_name: nextcloud-whiteboard-server
+  #   image: ${image2}
+  #   restart: unless-stopped
+  #   networks: 
+  #     - nextcloud_net
+  #   ports:
+  #    - '${whiteboard_port}:3002'
+  #   environment:
+  #     NEXTCLOUD_URL: ${nextcloud_backendurl}
+  #     JWT_SECRET_KEY: ${jwt_secret_key}
+
 
 networks:
   nextcloud_net:
