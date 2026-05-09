@@ -17,6 +17,15 @@
 #   docker compose up --detach
 
 services:
+  webesite0:
+    container_name: ${container_name0}
+    image:  ${image}
+    restart: unless-stopped
+    ports:
+    - '${apache_site0_port}:80'
+    volumes:
+      - '${apache_site0_html}:/usr/local/apache2/htdocs/'
+
   webesite1:
     container_name: ${container_name1}
     image:  ${image}
