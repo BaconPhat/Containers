@@ -18,7 +18,7 @@
 services:
   construct:
     container_name: construct
-    image: construct:latest
+    image: construct:26.4.28
     restart: unless-stopped
     ports:
       - 2289:22/tcp

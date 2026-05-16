@@ -1,14 +1,19 @@
-# podman build --tag baconphat/construct:latest --pull=false  .
-# docker push baconphat/construct
+# podman build --tag baconphat/construct:26.4.28 .
+# podman push baconphat/construct
+# podman exec -u 0 -it construct /bin/bash
 
 FROM ubuntu:24.04
+LABEL Author="pj@guibord.tech"
 
 # Install necessary packages
-RUN apt-get update && \
-    apt-get install -y openssh-server
+RUN apt update \
+&& apt install openssh-server -y \
+&& apt install dnsutils -y \
+&& apt install iputils-ping -y \
+&& setcap cap_net_raw+p /usr/bin/ping
 
 # Add init user for initial ssh connection
-RUN sudo useradd init && \
+RUN useradd -ms /bin/bash init  && \
     echo "init:th3-Construct" | chpasswd && \
     usermod -aG sudo init
 
