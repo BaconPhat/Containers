@@ -1,0 +1,62 @@
+# Title: BaconPhat/Containers/dns-blacklist
+#
+# This hosts file is a merged collection of hosts from reputable sources,
+# with a dash of crowd sourcing via GitHub
+#
+# Date: May 24 2026 16:38:39 (UTC)
+# Number of unique domains: 32
+#
+# ===============================================================
+
+127.0.0.1 localhost
+127.0.0.1 localhost.localdomain
+127.0.0.1 local
+255.255.255.255 broadcasthost
+::1 localhost
+::1 ip6-localhost
+::1 ip6-loopback
+fe80::1%lo0 localhost
+ff00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+0.0.0.0 0.0.0.0
+
+
+#=====================================
+0.0.0.0 identify.hotjar.com
+0.0.0.0 insights.hotjar.com
+0.0.0.0 surveys.hotjar.com
+0.0.0.0 api.mouseflow.com
+0.0.0.0 tools.mouseflow.com
+0.0.0.0 freshmarketer.com
+0.0.0.0 claritybt.freshmarketer.com
+0.0.0.0 fwtracks.freshmarketer.com
+0.0.0.0 api.luckyorange.com
+0.0.0.0 realtime.luckyorange.com
+0.0.0.0 cdn.luckyorange.com
+0.0.0.0 w1.luckyorange.com
+0.0.0.0 api.bugsnag.com
+0.0.0.0 app.bugsnag.com
+0.0.0.0 browser.sentry-cdn.com
+0.0.0.0 app.getsentry.com
+0.0.0.0 events.reddit.com
+0.0.0.0 business-api.tiktok.com
+0.0.0.0 log.byteoversea.com
+0.0.0.0 udcm.yahoo.com
+0.0.0.0 log.fc.yahoo.com
+0.0.0.0 appmetrica.yandex.ru
+0.0.0.0 metrika.yandex.ru
+0.0.0.0 data.mistat.india.xiaomi.com
+0.0.0.0 data.mistat.rus.xiaomi.com
+0.0.0.0 metrics2.data.hicloud.com
+0.0.0.0 grs.hicloud.com
+0.0.0.0 logservice.hicloud.com
+0.0.0.0 logbak.hicloud.com
+0.0.0.0 api-adservices.apple.com
+0.0.0.0 books-analytics-events.apple.com
+0.0.0.0 weather-analytics-events.apple.com
+0.0.0.0 samsung-com.112.2o7.net
+
+# End 
