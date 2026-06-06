@@ -23,7 +23,15 @@ services:
     env_file:
        - .env
     ports:
-      - '${portainer_port}:9000'
+      - 9443:9443
+      - 8000:8000  # Edge Agents
+    environment:
+      AGENT_SECRET: ${agent_secret}
     volumes:
       - '${portainer_data}:/data'
-      - //var//run//docker.sock:/var/run/docker.sock:RO
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  default:
+    name: portainer_network
+    driver: bridge
