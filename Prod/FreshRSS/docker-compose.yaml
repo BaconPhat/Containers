@@ -17,8 +17,8 @@
 
 services:
   freshrss:
-    container_name: ${container_name}
-    image: ${image}
+    container_name: freshrss
+    image: freshrss/freshrss:latest
     restart: unless-stopped
     env_file:
        - .env
@@ -30,7 +30,7 @@ services:
     environment:
       TZ: ${time_zone}
       CRON_MIN: '13,43'
-      PUID: ${PUID}
-      PGID: ${PGID}
+      PUID: 1000
+      PGID: 1000
     volumes:
       - '${freshrss_config}:/var/www/FreshRSS/data'
