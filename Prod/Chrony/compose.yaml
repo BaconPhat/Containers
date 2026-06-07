@@ -31,7 +31,7 @@ services:
     ports:
       - 123:123/udp
     networks:
-      - pihole_net
+      - chrony_net
     environment:
       NTP_SERVERS: ${time_sources}
       TZ: ${timezone}
@@ -46,6 +46,6 @@ services:
       start_period: 40s
 
 networks:
-  pihole_net:
+  chrony_net:
     name: chrony_net
     driver: bridge
