@@ -17,8 +17,8 @@
 
 services:
   portainer:
-    container_name: ${container_name}
-    image: ${image}
+    container_name: portainer
+    image: portainer/portainer-ce:latest
     restart: unless-stopped
     env_file:
        - .env
