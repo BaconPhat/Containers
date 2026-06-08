@@ -18,8 +18,8 @@
 
 services:
   openspeedtest:
-    container_name: ${container_name}
-    image: ${image}
+    container_name: openspeedtest
+    image: openspeedtest/latest:latest
     restart: unless-stopped
     ports:
       - '${openspeedtest_port}:3000'
