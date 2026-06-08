@@ -20,12 +20,11 @@
 
 services:
   homer:
-    container_name: ${container_name}
-    image: ${image}
+    container_name: homer
+    image: b4bz/homer:latest
     restart: unless-stopped
     env_file:
     - path: .env
-      required: true
     ports:
       - "${homer_port}:8080"
     environment:
