@@ -27,6 +27,8 @@ services:
         max-size: 10m
     ports:
       - '${freshrss_port}:80'
+    networks:
+      - freshrss_net
     environment:
       TZ: ${time_zone}
       CRON_MIN: '13,43'
@@ -34,3 +36,8 @@ services:
       PGID: 1000
     volumes:
       - '${freshrss_config}:/var/www/FreshRSS/data'
+
+networks:
+  freshrss_net:
+    name: freshrss_net
+    driver: bridge
