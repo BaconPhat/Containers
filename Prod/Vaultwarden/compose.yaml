@@ -25,6 +25,9 @@ services:
     environment:
       TZ: ${time_zone}
       DOMAIN: ${vaultwarden_url}
+      PUSH_ENABLED: true
+      PUSH_INSTALLATION_ID: ${installation_id}
+      PUSH_INSTALLATION_KEY: ${installation_key}
       ENABLE_WEBSOCKET: false
       ADMIN_TOKEN: ${admin_token}
       ADMIN_RATELIMIT_MAX_BURST: 10
