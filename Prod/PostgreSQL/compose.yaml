@@ -24,8 +24,8 @@
 services:
 # DB
   postgres:
-    container_name: ${container_name1}
-    image: ${image1}
+    container_name: postgresql
+    image: postgres:17.9
     restart: unless-stopped
     env_file:
        - .env
@@ -49,8 +49,8 @@ services:
 
 # Tools
   pgadmin:
-    container_name: ${container_name2}
-    image: ${image2}
+    container_name: pgadmin
+    image: dpage/pgadmin4
     restart: unless-stopped
     env_file:
        - .env
