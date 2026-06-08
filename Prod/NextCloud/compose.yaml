@@ -93,19 +93,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      
-  
-  # nextcloud-whiteboard-server:
-  #   container_name: nextcloud-whiteboard-server
-  #   image: ${image2}
-  #   restart: unless-stopped
-  #   networks: 
-  #     - nextcloud_net
-  #   ports:
-  #    - '${whiteboard_port}:3002'
-  #   environment:
-  #     NEXTCLOUD_URL: ${nextcloud_backendurl}
-  #     JWT_SECRET_KEY: ${jwt_secret_key}
 
 
 networks:
