@@ -37,7 +37,6 @@ services:
       TZ: ${timezone}
       LOG_LEVEL: 0
       ENABLE_SYSCLK: "false" # Disable system clock synchronization
-      ENABLE_NTS: true # Used for upstream NTP authentication
     healthcheck:
       test: ["CMD", "chronyc", "tracking"]
       interval: 30s
