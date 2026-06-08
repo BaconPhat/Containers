@@ -21,6 +21,8 @@ services:
     container_name: ${container_name0}
     image:  ${image}
     restart: unless-stopped
+    networks: 
+      - apache_net
     ports:
     - '${apache_site0_port}:80'
     volumes:
@@ -30,6 +32,8 @@ services:
     container_name: ${container_name1}
     image:  ${image}
     restart: unless-stopped
+    networks: 
+      - apache_net
     ports:
     - '${apache_site1_port}:80'
     volumes:
@@ -39,6 +43,8 @@ services:
     container_name: ${container_name2}
     image:  ${image}
     restart: unless-stopped
+    networks: 
+      - apache_net
     ports:
     - '${apache_site2_port}:80'
     volumes:
@@ -48,7 +54,14 @@ services:
     container_name: ${container_name3}
     image:  ${image}
     restart: unless-stopped
+    networks: 
+      - apache_net
     ports:
     - '${apache_site3_port}:80'
     volumes:
       - '${apache_site3_html}:/usr/local/apache2/htdocs/'
+
+networks:
+  apache_net:
+    name: apache_net
+    driver: bridge
