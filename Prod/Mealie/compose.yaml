@@ -19,8 +19,8 @@
 
 services:
   mealie:
-    container_name: ${container_name}
-    image: ${image}
+    container_name: mealie
+    image: ghcr.io/mealie-recipes/mealie:latest
     restart: unless-stopped
     ports:
       - '${mealie_port}:9000'
