@@ -18,8 +18,8 @@
 
 services:
   nginx-proxy:
-    container_name: ${container_name}
-    image: ${image}
+    container_name: nginx-reverse-proxy
+    image: docker.io/jc21/nginx-proxy-manager:latest
     restart: unless-stopped
     env_file:
        - .env
