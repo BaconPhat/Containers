@@ -23,7 +23,7 @@ services:
     env_file:
        - .env
     ports:
-      - 9443:9443
+      - "${portainer_port}:9443"
       - 8000:8000  # Edge Agents
     environment:
       AGENT_SECRET: ${agent_secret}
