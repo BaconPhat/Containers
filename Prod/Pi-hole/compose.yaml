@@ -40,6 +40,7 @@ services:
       FTLCONF_dns_upstreams: ${pihole_upstream_dns}
       FTLCONF_dns_domain_name: ${pihole_fqdn}
       FTLCONF_dns_dnssec: true
+      FTLCONF_dns_listeningMode: 'ALL'
     volumes:
       - '${pihole_config}/etc-pihole:/etc/pihole'
       - '${pihole_config}/etc-dnsmasq.d:/etc/dnsmasq.d'
