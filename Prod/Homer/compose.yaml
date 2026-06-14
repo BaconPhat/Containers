@@ -23,6 +23,8 @@ services:
     container_name: homer
     image: b4bz/homer:latest
     restart: unless-stopped
+    networks: 
+      - homer_net
     env_file:
     - path: .env
     ports:
@@ -32,3 +34,8 @@ services:
      - GID=1000
     volumes:
       - "${homer_data}:/www/assets"
+
+networks:
+  homer_net:
+    name: homer_net
+    driver: bridge
