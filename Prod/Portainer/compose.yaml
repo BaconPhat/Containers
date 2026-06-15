@@ -23,10 +23,7 @@ services:
     env_file:
        - .env
     ports:
-      - "${portainer_port}:9443"
-      - 8000:8000  # Edge Agents
-    environment:
-      AGENT_SECRET: ${agent_secret}
+      - "${portainer_port_ui}:9443"
     volumes:
       - '${portainer_data}:/data'
       - /var/run/docker.sock:/var/run/docker.sock
