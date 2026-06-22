@@ -26,12 +26,12 @@ services:
     networks: 
       - homer_net
     env_file:
-    - path: .env
+      - path: /storage/container_data/.env
     ports:
       - "${homer_port}:8080"
     environment:
-     - UID=1000
-     - GID=1000
+      - UID=1000
+      - GID=1000
     volumes:
       - "${homer_data}:/www/assets"
 
