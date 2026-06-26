@@ -26,17 +26,15 @@ services:
       - .env
     hostname: ${hostname}
     ports:
-      # WebUI
       - ${pihole_https}:443/tcp
-      # DNS
       - 53:53/tcp
       - 53:53/udp
     networks:
       - pihole_net
     environment:
       TZ: ${time_zone}
-      PIHOLE_UID: '1000'
-      PIHOLE_GID: '1000'
+      PIHOLE_UID: ${pihole_pid}
+      PIHOLE_GID: ${pihole_gid}
       FTLCONF_dns_upstreams: ${pihole_upstream_dns}
       FTLCONF_dns_domain_name: ${pihole_fqdn}
       FTLCONF_dns_dnssec: true
