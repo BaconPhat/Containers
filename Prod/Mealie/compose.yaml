@@ -22,6 +22,8 @@ services:
     container_name: mealie
     image: ghcr.io/mealie-recipes/mealie:latest
     restart: unless-stopped
+    networks: 
+      - mealie_net
     ports:
       - '${mealie_port}:9000'
     environment:
@@ -66,3 +68,8 @@ services:
           memory: 1000M
     volumes:
       - '${mealie_config}:/app/data/'
+
+networks:
+  mealie_net:
+    name: mealie_net
+    driver: bridge
