@@ -16,7 +16,7 @@
 #   docker compose up --detach
 
 services:
-  Vaultwarden:
+  vaultwarden:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
