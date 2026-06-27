@@ -17,7 +17,7 @@
 #   docker compose up --detach
 
 services:
-  webesite0:
+  website0:
     container_name: ${container_name0}
     image:  ${image}
     restart: unless-stopped
@@ -28,7 +28,7 @@ services:
     volumes:
       - '${apache_site0_html}:/usr/local/apache2/htdocs/'
 
-  webesite1:
+  website1:
     container_name: ${container_name1}
     image:  ${image}
     restart: unless-stopped
@@ -39,7 +39,7 @@ services:
     volumes:
       - '${apache_site1_html}:/usr/local/apache2/htdocs/'
 
-  webesite2:
+  website2:
     container_name: ${container_name2}
     image:  ${image}
     restart: unless-stopped
@@ -50,7 +50,7 @@ services:
     volumes:
       - '${apache_site2_html}:/usr/local/apache2/htdocs/'
   
-  webesite3:
+  website3:
     container_name: ${container_name3}
     image:  ${image}
     restart: unless-stopped
