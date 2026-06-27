@@ -52,7 +52,7 @@ services:
       # Postgres Config
       DATABASE_URL: 'postgresql://${vaultwarden_db_un}:${vaultwarden_db_pw}@${vaultwarden_db_server}:${vaultwarden_db_port}/${vaultwarden_db}'
       DATABASE_MIN_CONNS: 1
-      DATABASE_MAX_CONNS=: 5
+      DATABASE_MAX_CONNS: 5
       # =====================================
       # Email Configuration
       SMTP_HOST: ${smtp_host}
