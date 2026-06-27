@@ -25,5 +25,5 @@ services:
       - '${openspeedtest_port}:3000'
     environment:
       TZ: ${time_zone}
-      PUID: ${PUID}
-      PGID: ${GUID}
+      PUID: ${openspeedtest_pid}
+      PGID: ${openspeedtest_gid}
