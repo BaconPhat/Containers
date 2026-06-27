@@ -20,9 +20,13 @@ services:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
+    networks:
+      - vaultwarden_net
     ports:
       - '${vaultwarden_port}:80'
     environment:
+      PUID: ${vaultwarden_pid}
+      PGID: ${vaultwarden_gid}
       TZ: ${time_zone}
       DOMAIN: ${vaultwarden_url}
       PUSH_ENABLED: true
@@ -58,5 +62,15 @@ services:
       SMTP_USERNAME: ${smtp_un}
       SMTP_PASSWORD: ${smtp_pw}
       SMTP_SECURITY: starttls
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     volumes:
       - '${vaultwarden_config}:/data/'
+
+networks:
+  vaultwarden_net:
+    name: vaultwarden_net
+    driver: bridge
