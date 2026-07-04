@@ -1,0 +1,62 @@
+---
+# ===========================================================================================
+# Title   Guacamole Docker Compose File
+# Created By: PJ Guibord
+# Date 07/04/2026
+# Revision: n/a
+# Version: 1.0
+# URL: 
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+
+services:
+  guacamole:
+    container_name: ${container_name}
+    image: ${image}
+    restart: unless-stopped
+    env_file:
+      - .env
+    hostname: ${hostname}
+    ports:
+      - ${guacamole_port}:8080/tcp
+      - 53:53/tcp
+      - 53:53/udp
+    networks:
+      - guacamole_net
+    environment:
+      TZ: ${time_zone}
+      GUACAMOLE_UID: ${guacamole_pid}
+      GUACAMOLE_GID: ${guacamole_gid}
+    volumes:
+      - '${guacamole_config}/etc-guacamole:/etc/guacamole'
+      - '${guacamole_config}/etc-dnsmasq.d:/etc/dnsmasq.d'
+    healthcheck:
+      disable: false
+      test:
+        [
+          "CMD",
+          "dig",
+          "+short",
+          "+norecurse",
+          "+retry=0",
+          "@127.0.0.1",
+          "guacamole",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+      start_interval: 5s
+
+networks:
+  guacamole_net:
+    name: guacamole_net
+    driver: bridge
