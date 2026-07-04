@@ -21,6 +21,8 @@ services:
     container_name: nginx-reverse-proxy
     image: docker.io/jc21/nginx-proxy-manager:latest
     restart: unless-stopped
+    networks: 
+      - nginx-proxy_net
     env_file:
        - .env
     ports:
@@ -37,3 +39,8 @@ services:
       test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
       timeout: 3s
+
+networks:
+  nginx-proxy_net:
+    name: nginx-proxy_net
+    driver: bridge
