@@ -1,6 +1,6 @@
 ---
 # ===========================================================================================
-# Title   Docker Compose YAML
+# Title   Plex Media Server
 # Created By: PJ Guibord
 # Date 09/30/2024
 # Revision: n/a
@@ -18,8 +18,9 @@
 services:
   plex:
     container_name: plex
-    image: plexinc/pms-docker:latest
+    image: lscr.io/linuxserver/plex:latest
     restart: unless-stopped
+    network_mode: "host"
     env_file:
        - .env
     ports:
@@ -33,13 +34,14 @@ services:
       - "32413:32413/udp"
       - "32414:32414/udp"
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${time_zone}
-      - PLEX_CLAIM=${Plex_Claim}
-      - HOSTNAME=${Plex_Hostname}
-      - ADVERTISE_IP=${Plex_Advertise}
-      - ALLOWED_NETWORKS=${Plex_Allowed_Nets}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${time_zone}
+      PLEX_CLAIM: ${Plex_Claim}
+      HOSTNAME: ${Plex_Hostname}
+      VERSION: docker
+      ADVERTISE_IP: ${Plex_Advertise}
+      ALLOWED_NETWORKS: ${Plex_Allowed_Nets}
     volumes:
       - '${Plex_Config}:/config'
       - '${Plex_Transcode}:/transcode'
