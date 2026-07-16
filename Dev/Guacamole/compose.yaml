@@ -1,6 +1,6 @@
 ---
 # ===========================================================================================
-# Title   Guacamole Docker Compose File
+# Title:   Guacamole Docker Compose File
 # Created By: PJ Guibord
 # Date 07/04/2026
 # Revision: n/a
@@ -16,47 +16,61 @@
 # Start containers:: 
 #   docker compose up --detach
 
-
 services:
-  guacamole:
-    container_name: ${container_name}
-    image: ${image}
+  guacd:
+    image: guacamole/guacd:1.5.5
+    container_name: guacd
     restart: unless-stopped
-    env_file:
-      - .env
-    hostname: ${hostname}
-    ports:
-      - ${guacamole_port}:8080/tcp
-      - 53:53/tcp
-      - 53:53/udp
+    user: "988:988"
+    volumes:
+      - /storage/container_data/guacamole/drive:/drive:rw
+      - /storage/container_data/guacamole/record:/record:rw
     networks:
       - guacamole_net
+
+  guacamole-db:
+    image: postgres:16
+    container_name: guacamole-db
+    restart: unless-stopped
+    user: "988:988"
+    mem_limit: 256m
     environment:
-      TZ: ${time_zone}
-      GUACAMOLE_UID: ${guacamole_pid}
-      GUACAMOLE_GID: ${guacamole_gid}
+      POSTGRES_DB: guacamole_db
+      POSTGRES_USER: guacamole_user
+      POSTGRES_PASSWORD: "${GUAC_DB_PASSWORD}"
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - '${guacamole_config}/etc-guacamole:/etc/guacamole'
-      - '${guacamole_config}/etc-dnsmasq.d:/etc/dnsmasq.d'
-    healthcheck:
-      disable: false
-      test:
-        [
-          "CMD",
-          "dig",
-          "+short",
-          "+norecurse",
-          "+retry=0",
-          "@127.0.0.1",
-          "guacamole",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-      start_interval: 5s
+      - /storage/container_data/guacamole/db:/var/lib/postgresql/data:rw
+      - /storage/container_data/guacamole/initdb:/docker-entrypoint-initdb.d:ro
+    networks:
+      - guacamole_net
+
+  guacamole:
+    image: guacamole/guacamole:1.5.5
+    container_name: guacamole
+    restart: unless-stopped
+    user: "988:988"
+    depends_on:
+      - guacd
+      - guacamole-db
+    environment:
+      HOME: //tmp
+      WEBAPP_CONTEXT: ROOT
+      GUACD_HOSTNAME: guacd
+      POSTGRESQL_HOSTNAME: guacamole-db
+      POSTGRESQL_DATABASE: guacamole_db
+      POSTGRESQL_USER: guacamole_user
+      POSTGRESQL_PASSWORD: "${GUAC_DB_PASSWORD}"
+      EXTENSIONS: totp
+      GUACAMOLE_HOME: /guacamole_home
+    volumes:
+      - /storage/container_data/guacamole/home:/guacamole_home:rw
+      - /storage/container_data/guacamole/webrecord:/record:rw
+    ports:
+      - "8280:8080"
+    networks:
+      - guacamole_net
 
 networks:
   guacamole_net:
-    name: guacamole_net
     driver: bridge
