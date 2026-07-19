@@ -29,6 +29,7 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${time_zone}
+      PLEX_CLAIM: ${Plex_Claim}
       HOSTNAME: ${Plex_Hostname}
       VERSION: docker
       ADVERTISE_IP: ${Plex_Advertise}
