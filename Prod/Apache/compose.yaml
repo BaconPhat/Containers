@@ -26,7 +26,7 @@ services:
     ports:
     - '${apache_site0_port}:80'
     volumes:
-      - '${apache_site0_html}:/usr/local/apache2/htdocs/'
+      - '${apache_site0_html}:/usr/local/apache2/htdocs/:ro'
 
   website1:
     container_name: ${container_name1}
@@ -37,7 +37,7 @@ services:
     ports:
     - '${apache_site1_port}:80'
     volumes:
-      - '${apache_site1_html}:/usr/local/apache2/htdocs/'
+      - '${apache_site1_html}:/usr/local/apache2/htdocs/:ro'
 
   website2:
     container_name: ${container_name2}
@@ -48,7 +48,7 @@ services:
     ports:
     - '${apache_site2_port}:80'
     volumes:
-      - '${apache_site2_html}:/usr/local/apache2/htdocs/'
+      - '${apache_site2_html}:/usr/local/apache2/htdocs/:ro'
   
   website3:
     container_name: ${container_name3}
@@ -59,7 +59,7 @@ services:
     ports:
     - '${apache_site3_port}:80'
     volumes:
-      - '${apache_site3_html}:/usr/local/apache2/htdocs/'
+      - '${apache_site3_html}:/usr/local/apache2/htdocs/:ro'
 
 networks:
   apache_net:
