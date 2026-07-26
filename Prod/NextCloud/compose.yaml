@@ -57,6 +57,7 @@ services:
       POSTGRES_PASSWORD: ${nextcloud_db_pw}
     volumes:
       # NextCloud Base
+      - '{nextcloud_servername}:/etc/apache2/conf-enabled/servername.conf:ro'
       - '${nextcloud_config}:/var/www/html/config/'
       - '${nextcloud_custom_apps_data}:/var/www/html/custom_apps/'
       - '${nextcloud_themes}:/var/www/html/themes/'
