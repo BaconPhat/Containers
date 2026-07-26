@@ -1,0 +1,36 @@
+---
+# ===========================================================================================
+# Title   Portainer Agents
+# Created By: PJ Guibord
+# Date 07/25/2026
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# docker run -p <HostPort:containerport> imagename:tag
+
+# Start containers:: 
+#   docker compose up --detach
+
+services:
+  agent:
+    container_name: portainer_agent
+    image: portainer/agent:${AGENT_VERSION}
+    restart: unless-stopped
+    networks: 
+      - portainer_net
+    environment:
+      AGENT_SECRET: ${AGENT_SECRET}
+    volumes:
+      - ${DOCKER_SOCKET}:/var/run/docker.sock
+      - ${DOCKER_VOLUMES}:/var/lib/docker/volumes
+    ports:
+      - "${AGENT_PORT}:9001"
+
+networks:
+  portainer_net:
+    name: portainer_net
+    driver: bridge
