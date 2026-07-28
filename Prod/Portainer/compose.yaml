@@ -18,10 +18,12 @@
 services:
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.39.5
     restart: unless-stopped
-    env_file:
-       - .env
+    networks: 
+      - portainer_net
+    environment:
+      AGENT_SECRET: ${AGENT_SECRET}
     ports:
       - "${portainer_port_ui}:9443"
     volumes:
@@ -29,6 +31,5 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
-  default:
-    name: portainer_network
+  portainer_net:
     driver: bridge
