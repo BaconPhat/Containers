@@ -1,63 +1,75 @@
----
 # ===========================================================================================
-# Title   Apache
+# Title:      Apache
 # Created By: PJ Guibord
-# Date 09/20/2024
-# Revision: 01/04/2025
-# Version: 1.1
+# Date:       09/20/2024
+# Revision:   07/26/2026
+# Version:    2.0
 # ===========================================================================================
 # Revision History:
 #   - 1.0: Initial Release
-#   - 1.1: Added health check
+#   - 1.1: Added health check (documented, never actually landed)
+#   - 2.0: Migrated docroots from XION S: -> UNAS2 NFS (/mnt/unas2/user_shares)
+#          Health check implemented (bash /dev/tcp - image ships no curl/wget)
+#          Services deduplicated via YAML anchor
+#          Service keys corrected: webesiteN -> websiteN
+#          Note: httpd:latest already runs workers as www-data (33:33), which matches
+#          the NFS share ownership. No httpd.conf override required.
 # ===========================================================================================
-
 # docker run -p <HostPort:containerport> imagename:tag
-
-# Start containers:: 
-#   docker compose up --detach
+# Start containers::
+#   docker compose up --detach --remove-orphans
+# ===========================================================================================
+x-site: &site
+  image: ${image}
+  restart: unless-stopped
+  networks:
+    - apache_net
+  environment:
+    TZ: America/Denver
+  healthcheck:
+    test:
+      - CMD
+      - bash
+      - -c
+      - >-
+        exec 3<>/dev/tcp/127.0.0.1/80 &&
+        printf 'GET / HTTP/1.0\r\nHost: localhost\r\n\r\n' >&3 &&
+        head -n1 <&3 | grep -q ' 200 '
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 20s
 
 services:
   website0:
+    <<: *site
     container_name: ${container_name0}
-    image:  ${image}
-    restart: unless-stopped
-    networks: 
-      - apache_net
     ports:
-    - '${apache_site0_port}:80'
+      - '${apache_site0_port}:80'
     volumes:
       - '${apache_site0_html}:/usr/local/apache2/htdocs/:ro'
 
   website1:
+    <<: *site
     container_name: ${container_name1}
-    image:  ${image}
-    restart: unless-stopped
-    networks: 
-      - apache_net
     ports:
-    - '${apache_site1_port}:80'
+      - '${apache_site1_port}:80'
     volumes:
       - '${apache_site1_html}:/usr/local/apache2/htdocs/:ro'
 
   website2:
+    <<: *site
     container_name: ${container_name2}
-    image:  ${image}
-    restart: unless-stopped
-    networks: 
-      - apache_net
     ports:
-    - '${apache_site2_port}:80'
+      - '${apache_site2_port}:80'
     volumes:
       - '${apache_site2_html}:/usr/local/apache2/htdocs/:ro'
-  
+
   website3:
+    <<: *site
     container_name: ${container_name3}
-    image:  ${image}
-    restart: unless-stopped
-    networks: 
-      - apache_net
     ports:
-    - '${apache_site3_port}:80'
+      - '${apache_site3_port}:80'
     volumes:
       - '${apache_site3_html}:/usr/local/apache2/htdocs/:ro'
 
