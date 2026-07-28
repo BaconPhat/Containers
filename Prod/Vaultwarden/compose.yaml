@@ -63,10 +63,11 @@ services:
       SMTP_PASSWORD: ${smtp_pw}
       SMTP_SECURITY: starttls
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
-      interval: 30s
+      test: ["CMD", "/healthcheck.sh"]
+      interval: 60s
       timeout: 10s
       retries: 3
+      start_period: 30s
     volumes:
       - '${vaultwarden_config}:/data/'
 
