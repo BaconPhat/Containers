@@ -9,78 +9,118 @@
 # ===========================================================================================
 # Revision History:
 #   - 1.0: Initial Release
-#
-# Todo:
-#   - User pictures sync
+#   - 2.0: Added cron service sidecar, built anchors for shared artifacts,
+#          healthcheck, and env var for update check
 # ===========================================================================================
 
 # docker run -p <HostPort:containerport> imagename:tag
 
-# Start containers:: 
+#
+# Start:
 #   docker compose up --detach
+#
+# Validate before starting (catches undefined networks, bad anchors, unresolved vars):
+#   docker compose config >/dev/null && echo OK
+#
+# OCC CLI -- run as www-data, NOT root:
+#   docker compose exec -u www-data nextcloud php occ <command>
+#
+# Maintenance:
+#   docker compose exec -u www-data nextcloud php occ maintenance:mode --on
+#   docker compose exec -u www-data nextcloud php occ maintenance:mode --off
+#   docker compose exec -u www-data nextcloud php occ files:scan --all
+#   docker compose exec -u www-data nextcloud php occ maintenance:repair --include-expensive
+#   docker compose exec -u www-data nextcloud php occ db:add-missing-indices
+#   docker compose exec -u www-data nextcloud php occ preview:generate-all -vvv
+#   docker compose exec -u www-data nextcloud php occ config:list system
+#   docker compose exec -u www-data nextcloud php occ setupchecks
+#
+# UPGRADE -- the webroot is ephemeral, so the entrypoint never auto-migrates.
+# `occ upgrade` is MANDATORY, not optional. One major version step at a time.
+#   docker compose stop nextcloud-cron
+#   docker compose exec -u www-data nextcloud php occ maintenance:mode --on
+#   <back up the database>
+#   vi .env                      # bump image1 -- both services share it
+#   docker compose pull && docker compose up -d
+#   docker compose exec -u www-data nextcloud php occ upgrade
+#   docker compose exec -u www-data nextcloud php occ db:add-missing-indices
+#   docker compose exec -u www-data nextcloud php occ maintenance:mode --off
+#   docker compose start nextcloud-cron
+# ===========================================================================================
 
-# OCC CLI:
-# Login with www-data NOT root
-# php occ ....
+x-nc-env: &nc-env
+  TZ: ${time_zone}
+  #=====================================
+  # Postgres Config
+  POSTGRES_HOST: ${nextcloud_db_server}
+  POSTGRES_DB: ${nextcloud_db}
+  POSTGRES_USER: ${nextcloud_db_un}
+  POSTGRES_PASSWORD: ${nextcloud_db_pw}
 
-# Maintanence Activities:
-# docker exec -u www-data nextcloud php /var/www/html/occ maintenance:mode --on
-# docker exec -u www-data nextcloud php /var/www/html/occ maintenance:mode --off
+x-nc-logging: &nc-logging
+  driver: json-file
+  options:
+    max-size: 50m
+    max-file: "3"
 
-# docker exec -u www-data nextcloud php /var/www/html/cron.php
-# docker exec -u www-data nextcloud php /var/www/html/occ app:disable dashboard
-# docker exec -u www-data nextcloud php /var/www/html/occ files:scan --all
-# docker exec -u www-data nextcloud php /var/www/html/occ maintenance:repair --include-expensive
-# docker exec -u www-data nextcloud php /var/www/html/occ db:add-missing-indices
-# docker exec -u www-data nextcloud php /var/www/html/occ upgrade
-# docker exec -u www-data nextcloud php /var/www/html/occ preview:generate-all -vvv
+x-nc-volumes: &nc-volumes
+  # NextCloud Base
+  - '${nextcloud_config}:/var/www/html/config/'
+  - '${nextcloud_custom_apps_data}:/var/www/html/custom_apps/'
+  - '${nextcloud_themes}:/var/www/html/themes/'
+  - '${nextcloud_data}:/var/www/html/data/'
+  - '${nextcloud_tempdir}:/tmp/nextcloudtemp/'
+  # User Files -- each overlays the corresponding data/<user>/files/
+  - '${user1_spath}:${user1_cpath}'
+  - '${user2_spath}:${user2_cpath}'
+  - '${user3_spath}:${user3_cpath}'
+  - '${user4_spath}:${user4_cpath}'
+  - '${user5_spath}:${user5_cpath}'
+  - '${user8_spath}:${user8_cpath}'
+  - '${user9_spath}:${user9_cpath}'
 
 services:
   nextcloud:
     container_name: nextcloud
     image: ${image1}
     restart: unless-stopped
-    logging:
-      options:
-         max-size: 50m
-    networks: 
-      - nextcloud_net
+    logging: *nc-logging
+    networks: [nextcloud_net]
     ports:
-     - '${nextcloud_port}:80'
-    environment:
-      TZ: ${time_zone}
-      #=====================================
-      # Postgres Config
-      POSTGRES_HOST: ${nextcloud_db_server}
-      POSTGRES_DB: ${nextcloud_db}
-      POSTGRES_USER: ${nextcloud_db_un}
-      POSTGRES_PASSWORD: ${nextcloud_db_pw}
-    volumes:
-      # NextCloud Base
-      - '${nextcloud_servername}:/etc/apache2/conf-enabled/servername.conf:ro'
-      - '${nextcloud_config}:/var/www/html/config/'
-      - '${nextcloud_custom_apps_data}:/var/www/html/custom_apps/'
-      - '${nextcloud_themes}:/var/www/html/themes/'
-      - '${nextcloud_data}:/var/www/html/data/'
-      - '${nextcloud_tempdir}:/tmp/nextcloudtemp/'
-      # User Files
-      - '${user1_spath}:${user1_cpath}'
-      - '${user2_spath}:${user2_cpath}'
-      - '${user3_spath}:${user3_cpath}'
-      - '${user4_spath}:${user4_cpath}'
-      - '${user5_spath}:${user5_cpath}'
-      - '${user8_spath}:${user8_cpath}'
-      - '${user9_spath}:${user9_cpath}'
+      - '${nextcloud_port}:80'
+    environment: *nc-env
+    volumes: *nc-volumes
+    # status.php is cheaper than / and returns parseable JSON.
+    # Expect this to report unhealthy during maintenance mode -- that is
+    # correct behaviour, so do not hang a depends_on: service_healthy on it.
     healthcheck:
-      # status.php is cheaper than / and returns parseable JSON.
-      # Expect this to report unhealthy during maintenance mode -- that is
-      # correct behaviour, so do not hang a depends_on: service_healthy on it.
       test: ["CMD", "curl", "-f", "http://localhost/status.php"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
 
+  nextcloud-cron:
+    container_name: nextcloud-cron
+    image: ${image1}
+    restart: unless-stopped
+    logging: *nc-logging
+    # Do NOT set `entrypoint: /cron.sh` on its own. That replaces the image
+    # entrypoint, which is what populates /var/www/html from /usr/src/nextcloud.
+    # With an ephemeral webroot the container then has only the bind-mounted
+    # subdirectories and no application code:
+    #   Could not open input file: /var/www/html/cron.php
+    # Keeping the default entrypoint and passing cron as the command lets the
+    # webroot get populated first, then execs the cron loop.
+    entrypoint: /entrypoint.sh
+    command: /cron.sh
+    networks: [nextcloud_net]
+    depends_on:
+      - nextcloud
+    environment:
+      <<: *nc-env
+      NEXTCLOUD_UPDATE: 1
+    volumes: *nc-volumes
 
 networks:
   nextcloud_net:
