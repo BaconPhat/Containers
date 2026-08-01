@@ -11,6 +11,9 @@
 #   - 1.0: Initial Release
 #   - 2.0: Added cron service sidecar, built anchors for shared artifacts,
 #          healthcheck, and env var for update check
+#   - 2.1: Added nextcloud-redis. Moves memcache.distributed and memcache.locking off
+#          the database. File locking was doing two SQL round trips per file operation
+#          to Postgres
 # ===========================================================================================
 
 # docker run -p <HostPort:containerport> imagename:tag
@@ -35,6 +38,11 @@
 #   docker compose exec -u www-data nextcloud php occ config:list system
 #   docker compose exec -u www-data nextcloud php occ setupchecks
 #
+# Redis:
+#   docker compose exec nextcloud-redis redis-cli ping
+#   docker compose exec nextcloud-redis redis-cli info keyspace
+#   docker compose exec -u www-data nextcloud php occ config:system:get memcache.locking
+#
 # UPGRADE -- the webroot is ephemeral, so the entrypoint never auto-migrates.
 # `occ upgrade` is MANDATORY, not optional. One major version step at a time.
 #   docker compose stop nextcloud-cron
@@ -51,12 +59,20 @@
 x-nc-env: &nc-env
   TZ: ${time_zone}
   #=====================================
+  # Redis -- consumed by the image's stock config/redis.config.php, which sets
+  # memcache.distributed, memcache.locking and the 'redis' array when REDIS_HOST
+  # is present. Do NOT also set these in zz-50-caching.config.php; that fragment
+  # sorts later and would silently win.
+  REDIS_HOST: nextcloud-redis
+  REDIS_HOST_PASSWORD: ${redis_password}
+  #=====================================
   # Postgres Config
+  # NOTE: still XION's shared instance. XION must stay powered on.
   POSTGRES_HOST: ${nextcloud_db_server}
   POSTGRES_DB: ${nextcloud_db}
   POSTGRES_USER: ${nextcloud_db_un}
   POSTGRES_PASSWORD: ${nextcloud_db_pw}
-
+ 
 x-nc-logging: &nc-logging
   driver: json-file
   options:
@@ -79,10 +95,11 @@ x-nc-volumes: &nc-volumes
   - '${user8_spath}:${user8_cpath}'
   - '${user9_spath}:${user9_cpath}'
 
+
 services:
   nextcloud:
     container_name: nextcloud
-    image: ${image1}
+    image: ${nextcloud_image}
     restart: unless-stopped
     logging: *nc-logging
     networks: [nextcloud_net]
@@ -90,6 +107,9 @@ services:
       - '${nextcloud_port}:80'
     environment: *nc-env
     volumes: *nc-volumes
+    depends_on:
+      nextcloud-redis:
+        condition: service_healthy
     # status.php is cheaper than / and returns parseable JSON.
     # Expect this to report unhealthy during maintenance mode -- that is
     # correct behaviour, so do not hang a depends_on: service_healthy on it.
@@ -99,28 +119,60 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
-
+ 
   nextcloud-cron:
     container_name: nextcloud-cron
-    image: ${image1}
+    image: ${nextcloud_image}
     restart: unless-stopped
     logging: *nc-logging
     # Do NOT set `entrypoint: /cron.sh` on its own. That replaces the image
     # entrypoint, which is what populates /var/www/html from /usr/src/nextcloud.
-    # With an ephemeral webroot the container then has only the bind-mounted
-    # subdirectories and no application code:
-    #   Could not open input file: /var/www/html/cron.php
-    # Keeping the default entrypoint and passing cron as the command lets the
-    # webroot get populated first, then execs the cron loop.
+    # NEXTCLOUD_UPDATE=1 forces the entrypoint's init block to run even though
+    # the command is not apache2-foreground or php-fpm; without it the webroot
+    # stays empty and cron.php does not exist.
     entrypoint: /entrypoint.sh
     command: /cron.sh
     networks: [nextcloud_net]
     depends_on:
-      - nextcloud
+      nextcloud:
+        condition: service_started
+      nextcloud-redis:
+        condition: service_healthy
     environment:
       <<: *nc-env
       NEXTCLOUD_UPDATE: 1
     volumes: *nc-volumes
+ 
+  nextcloud-redis:
+    container_name: nextcloud-redis
+    image: ${redis_image}
+    restart: unless-stopped
+    logging: *nc-logging
+    networks: [nextcloud_net]
+    # noeviction is REQUIRED. Any LRU/LFU policy will silently evict file-lock
+    # keys under memory pressure, which is worse than not running Redis at all.
+    # Persistence is off on purpose: locks and cache entries are ephemeral, so
+    # writing them to disk is pointless I/O.
+    command:
+      - redis-server
+      - --requirepass
+      - ${redis_password}
+      - --maxmemory-policy
+      - noeviction
+      - --save
+      - ""
+      - --appendonly
+      - "no"
+    environment:
+      # Lets the healthcheck authenticate without putting the password in the
+      # healthcheck command itself.
+      REDISCLI_AUTH: ${redis_password}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
 networks:
   nextcloud_net:
