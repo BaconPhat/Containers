@@ -97,52 +97,33 @@ x-nc-volumes: &nc-volumes
 
 
 services:
-  nextcloud:
-    container_name: nextcloud
-    image: ${nextcloud_image}
+
+  nextcloud-db:
+    container_name: nextcloud-db
+    image: ${image_db}
     restart: unless-stopped
     logging: *nc-logging
     networks: [nextcloud_net]
-    ports:
-      - '${nextcloud_port}:80'
-    environment: *nc-env
-    volumes: *nc-volumes
-    depends_on:
-      nextcloud-redis:
-        condition: service_healthy
-    # status.php is cheaper than / and returns parseable JSON.
-    # Expect this to report unhealthy during maintenance mode -- that is
-    # correct behaviour, so do not hang a depends_on: service_healthy on it.
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/status.php"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
- 
-  nextcloud-cron:
-    container_name: nextcloud-cron
-    image: ${nextcloud_image}
-    restart: unless-stopped
-    logging: *nc-logging
-    # Do NOT set `entrypoint: /cron.sh` on its own. That replaces the image
-    # entrypoint, which is what populates /var/www/html from /usr/src/nextcloud.
-    # NEXTCLOUD_UPDATE=1 forces the entrypoint's init block to run even though
-    # the command is not apache2-foreground or php-fpm; without it the webroot
-    # stays empty and cron.php does not exist.
-    entrypoint: /entrypoint.sh
-    command: /cron.sh
-    networks: [nextcloud_net]
-    depends_on:
-      nextcloud:
-        condition: service_started
-      nextcloud-redis:
-        condition: service_healthy
     environment:
-      <<: *nc-env
-      NEXTCLOUD_UPDATE: 1
-    volumes: *nc-volumes
- 
+      TZ: ${time_zone}
+      POSTGRES_DB: ${nextcloud_db}
+      POSTGRES_USER: ${nextcloud_db_un}
+      POSTGRES_PASSWORD: ${nextcloud_db_pw}
+      # Matches the source (libc provider, en_US.utf8). Read ONLY on first
+      # initdb -- ignored once PGDATA holds a database.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.utf8"
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - '${nextcloud_db_path}:/var/lib/postgresql/data'
+      - '/storage/backups/nextcloud:/backups'
+    shm_size: 256mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${nextcloud_db_un} -d ${nextcloud_db}"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   nextcloud-redis:
     container_name: nextcloud-redis
     image: ${redis_image}
@@ -173,6 +154,58 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  nextcloud:
+    container_name: nextcloud
+    image: ${nextcloud_image}
+    restart: unless-stopped
+    logging: *nc-logging
+    networks: [nextcloud_net]
+    ports:
+      - '${nextcloud_port}:80'
+    environment: *nc-env
+    volumes: *nc-volumes
+    depends_on:
+      nextcloud-db:
+        condition: service_healthy
+      nextcloud-redis:
+        condition: service_healthy
+    # status.php is cheaper than / and returns parseable JSON.
+    # Expect this to report unhealthy during maintenance mode -- that is
+    # correct behaviour, so do not hang a depends_on: service_healthy on it.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/status.php"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+ 
+  nextcloud-cron:
+    container_name: nextcloud-cron
+    image: ${nextcloud_image}
+    restart: unless-stopped
+    logging: *nc-logging
+    # Do NOT set `entrypoint: /cron.sh` on its own. That replaces the image
+    # entrypoint, which is what populates /var/www/html from /usr/src/nextcloud.
+    # NEXTCLOUD_UPDATE=1 forces the entrypoint's init block to run even though
+    # the command is not apache2-foreground or php-fpm; without it the webroot
+    # stays empty and cron.php does not exist.
+    entrypoint: /entrypoint.sh
+    command: /cron.sh
+    networks: [nextcloud_net]
+    depends_on:
+      nextcloud-db:
+        condition: service_healthy
+      nextcloud-redis:
+        condition: service_healthy
+      nextcloud:
+        condition: service_started
+    environment:
+      <<: *nc-env
+      NEXTCLOUD_UPDATE: 1
+    volumes: *nc-volumes
+ 
+  
 
 networks:
   nextcloud_net:
