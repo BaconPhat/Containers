@@ -18,12 +18,39 @@
 #   docker compose up --detach
 
 services:
+
+  mealie-db:
+    container_name: mealie_db
+    image: ${db_image}
+    restart: unless-stopped
+    networks:
+      - mealie_net
+    environment:
+      POSTGRES_DB: ${mealie_db}
+      POSTGRES_USER: ${mealie_db_un}
+      POSTGRES_PASSWORD: ${mealie_db_pw}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+      TZ: ${time_zone}
+    volumes:
+      - '${mealie_db_data}:/var/lib/postgresql/data'
+    shm_size: 128mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${mealie_db_un} -d ${mealie_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+
   mealie:
     container_name: mealie
     image: ghcr.io/mealie-recipes/mealie:latest
     restart: unless-stopped
     networks: 
       - mealie_net
+    depends_on:
+      mealie-db:
+        condition: service_healthy
     ports:
       - '${mealie_port}:9000'
     environment:
