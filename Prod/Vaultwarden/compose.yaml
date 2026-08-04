@@ -16,12 +16,39 @@
 #   docker compose up --detach
 
 services:
+
+  vaultwarden-db:
+    container_name: vaultwarden_db
+    image: ${db_image}
+    restart: unless-stopped
+    networks:
+      - vaultwarden_net
+    environment:
+      POSTGRES_USER: ${vaultwarden_db_un}
+      POSTGRES_PASSWORD: ${vaultwarden_db_pw}
+      POSTGRES_DB: ${vaultwarden_db}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+      TZ: ${time_zone}
+    volumes:
+      - '${vaultwarden_db_data}:/var/lib/postgresql/data'
+    shm_size: 128mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${vaultwarden_db_un} -d ${vaultwarden_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+
   vaultwarden:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
     networks:
       - vaultwarden_net
+    depends_on:
+      vaultwarden-db:
+        condition: service_healthy
     ports:
       - '${vaultwarden_port}:80'
     environment:
