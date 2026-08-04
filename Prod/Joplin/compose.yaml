@@ -17,12 +17,39 @@
 #   docker compose up --detach
 
 services:
+
+  joplin-db:
+    container_name: joplin_db
+    image: ${db_image}
+    restart: unless-stopped
+    networks:
+      - joplin_net
+    environment:
+      POSTGRES_DB: ${joplin_db}
+      POSTGRES_USER: ${joplin_db_un}
+      POSTGRES_PASSWORD: ${joplin_db_pw}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+      TZ: ${time_zone}
+    volumes:
+      - '${joplin_db_data}:/var/lib/postgresql/data'
+    shm_size: 256mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${joplin_db_un} -d ${joplin_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+
   joplin:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
     networks: 
       - joplin_net
+    depends_on:
+      joplin-db:
+        condition: service_healthy
     ports:
       - '${joplin_port}:22300'
     environment:
