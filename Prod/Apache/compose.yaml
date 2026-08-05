@@ -8,12 +8,7 @@
 # Revision History:
 #   - 1.0: Initial Release
 #   - 1.1: Added health check (documented, never actually landed)
-#   - 2.0: Migrated docroots from XION S: -> UNAS2 NFS (/mnt/unas2/user_shares)
-#          Health check implemented (bash /dev/tcp - image ships no curl/wget)
-#          Services deduplicated via YAML anchor
-#          Service keys corrected: webesiteN -> websiteN
-#          Note: httpd:latest already runs workers as www-data (33:33), which matches
-#          the NFS share ownership. No httpd.conf override required.
+#   - 2.0: Migrated from Windows to Linux, added multiple sites, and updated documentation.
 # ===========================================================================================
 # docker run -p <HostPort:containerport> imagename:tag
 # Start containers::
