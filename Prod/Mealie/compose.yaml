@@ -44,7 +44,7 @@ services:
 
   mealie:
     container_name: mealie
-    image: ghcr.io/mealie-recipes/mealie:latest
+    image: ${mealie_image}
     restart: unless-stopped
     networks: 
       - mealie_net

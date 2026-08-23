@@ -19,7 +19,7 @@
 services:
   nginx-proxy:
     container_name: nginx-reverse-proxy
-    image: docker.io/jc21/nginx-proxy-manager:latest
+    image: ${nginx_image}
     restart: unless-stopped
     networks: 
       - nginx-proxy_net

@@ -18,7 +18,7 @@
 services:
   freshrss:
     container_name: freshrss
-    image: freshrss/freshrss:latest
+    image: ${freshrss_image}
     restart: unless-stopped
     env_file:
        - .env
