@@ -33,6 +33,7 @@ services:
       PIHOLE_UID: ${pihole_pid}
       PIHOLE_GID: ${pihole_gid}
       FTLCONF_dns_domain_name: ${pihole_fqdn}
+      FTLCONF_dns_hosts: ${pihole_dns_hosts}
       FTLCONF_dns_revServers: ${pihole_conditional_forwarding}
       FTLCONF_dns_dnssec: true
       FTLCONF_dns_listeningMode: 'ALL'
