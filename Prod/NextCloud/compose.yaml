@@ -111,11 +111,10 @@ services:
       POSTGRES_PASSWORD: ${nextcloud_db_pw}
       # Matches the source (libc provider, en_US.utf8). Read ONLY on first
       # initdb -- ignored once PGDATA holds a database.
-      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.utf8"
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.utf8 --data-checksums"
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - '${nextcloud_db_path}:/var/lib/postgresql/data'
-      - '/storage/backups/nextcloud:/backups'
     shm_size: 256mb
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${nextcloud_db_un} -d ${nextcloud_db}"]
