@@ -3,16 +3,18 @@
 # Title   FreshRSS
 # Created By: PJ Guibord
 # Date 01/18/2025
-# Revision: n/a
-# Version: a.0
+# Revision: 08/22/2026
+# Version: 1.1
 # ===========================================================================================
 # Revision History:
 #   - 1.0: Initial Release
+#   - 1.1: Pinned image. Removed env_file duplication and the PUID/PGID
+#          variables -- the upstream FreshRSS image ignores them and runs Apache as its
+#          built-in www-data (uid 33). Data on NFS is owned 988:33; access works via the
+#          GROUP bit, so gid 33 must keep matching or FreshRSS loses write access.
 # ===========================================================================================
 
-# docker run -p <HostPort:containerport> imagename:tag
-
-# Start containers:: 
+# Start containers::
 #   docker compose up --detach
 
 services:
@@ -20,8 +22,6 @@ services:
     container_name: freshrss
     image: ${freshrss_image}
     restart: unless-stopped
-    env_file:
-       - .env
     logging:
       options:
         max-size: 10m
@@ -32,8 +32,7 @@ services:
     environment:
       TZ: ${time_zone}
       CRON_MIN: '13,43'
-      PUID: 1000
-      PGID: 1000
+      SERVER_DNS: ${server_dns}
     volumes:
       - '${freshrss_config}:/var/www/FreshRSS/data'
 
