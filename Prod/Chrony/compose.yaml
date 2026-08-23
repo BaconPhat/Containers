@@ -26,8 +26,6 @@ services:
     image: ${image}
     restart: unless-stopped
     read_only: true
-    env_file:
-       - .env
     ports:
       - 123:123/udp
     networks:
