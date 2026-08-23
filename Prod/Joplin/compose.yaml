@@ -43,7 +43,7 @@ services:
 
   joplin:
     container_name: ${container_name}
-    image: ${image}
+    image: ${joplin_image}
     restart: unless-stopped
     networks: 
       - joplin_net
@@ -53,8 +53,6 @@ services:
     ports:
       - '${joplin_port}:22300'
     environment:
-      NTP_SERVER: ${joplin_ntp}
-      MAX_TIME_DRIFT: 0
       APP_PORT: 22300
       APP_BASE_URL: ${joplin_url}
       # =====================================
