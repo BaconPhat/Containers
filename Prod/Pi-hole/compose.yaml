@@ -22,9 +22,6 @@ services:
     container_name: ${container_name}
     image: ${image}
     restart: unless-stopped
-    env_file:
-      - .env
-    hostname: ${hostname}
     ports:
       - ${pihole_https}:443/tcp
       - 53:53/tcp
