@@ -21,9 +21,16 @@ services:
     container_name: openspeedtest
     image: openspeedtest/latest:latest
     restart: unless-stopped
+    networks: 
+      - openspeedtest_net
     ports:
       - '${openspeedtest_port}:3000'
     environment:
       TZ: ${time_zone}
       PUID: ${openspeedtest_pid}
       PGID: ${openspeedtest_gid}
+
+networks:
+  openspeedtest_net:
+    name: openspeedtest_net
+    driver: bridge
