@@ -53,6 +53,8 @@ services:
     ports:
       - '${joplin_port}:22300'
     environment:
+      TZ: ${time_zone}
+      NTP_SERVER: ${joplin_ntp}
       APP_PORT: 22300
       APP_BASE_URL: ${joplin_url}
       # =====================================
