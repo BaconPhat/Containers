@@ -2,3 +2,4 @@
 *.env
 port-dictionary.md
 config.json
+secrets.env
