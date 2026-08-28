@@ -1,0 +1,39 @@
+---
+# ===========================================================================================
+# Title:   Glances Docker Compose File
+# Created By: PJ Guibord
+# Date 08/28/2026
+# Revision: n/a
+# Version: 1.0
+# URL: https://github.com/nicolargo/glances
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+services:
+  glances:
+    image: ${glances_image}
+    container_name: ${container_name}
+    restart: unless-stopped
+    networks:
+      - glances_network
+    pid: host
+    ports:
+      - '${glances_port}:61208'
+    environment:
+      - GLANCES_OPT=-w -u ${glances_user} --password
+    secrets:
+      - source: glances_password
+        target: /root/.config/glances/${glances_user}.pwd
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+secrets:
+  glances_password:
+    file: ./secrets.env
+
+networks:
+  glances_network:
+    name: glances_network
+    driver: bridge
