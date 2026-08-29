@@ -66,6 +66,15 @@ x-nc-env: &nc-env
   REDIS_HOST: nextcloud-redis
   REDIS_HOST_PASSWORD: ${redis_password}
   #=====================================
+  # SMTP -- consumed by the image's stock config/smtp.config.php
+  SMTP_HOST: smtp.protonmail.ch
+  SMTP_PORT: 587
+  SMTP_SECURE: tls
+  SMTP_NAME: pj@guibord.tech
+  SMTP_PASSWORD: ${smtp_password}
+  MAIL_FROM_ADDRESS: pj
+  MAIL_DOMAIN: guibord.tech
+  #=====================================
   # Postgres Config
   # NOTE: still XION's shared instance. XION must stay powered on.
   POSTGRES_HOST: ${nextcloud_db_server}
