@@ -69,7 +69,7 @@ x-nc-env: &nc-env
   # SMTP -- consumed by the image's stock config/smtp.config.php
   SMTP_HOST: smtp.protonmail.ch
   SMTP_PORT: 587
-  SMTP_SECURE: tls
+  #SMTP_SECURE: SSL/TLS
   SMTP_NAME: pj@guibord.tech
   SMTP_PASSWORD: ${smtp_password}
   MAIL_FROM_ADDRESS: pj
