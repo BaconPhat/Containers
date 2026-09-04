@@ -75,6 +75,12 @@ services:
       MAILER_SECURITY: starttls
       MAILER_NOREPLY_NAME: 'Joplin Server'
       MAILER_NOREPLY_EMAIL: ${smtp_un}
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get({host:'localhost',port:22300,path:'/api/ping',headers:{'Host':'notes.guibord.tech'}}, r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
 
 networks:
   joplin_net:
