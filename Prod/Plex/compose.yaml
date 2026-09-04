@@ -31,12 +31,17 @@ services:
       PLEX_CLAIM: ${Plex_Claim}
       HOSTNAME: ${Plex_Hostname}
       VERSION: docker
-      ADVERTISE_IP: ${Plex_Advertise}
       ALLOWED_NETWORKS: ${Plex_Allowed_Nets}
     volumes:
       - '${Plex_Config}:/config'
       - '${Plex_Transcode}:/transcode'  # /dev/shm - transcode in RAM
       - '${Plex_Media}:/media'
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:32400/identity"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
 
 networks:
   plex_net:
