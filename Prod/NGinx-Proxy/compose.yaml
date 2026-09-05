@@ -21,8 +21,10 @@ services:
     container_name: nginx-reverse-proxy
     image: ${nginx_image}
     restart: unless-stopped
-    networks: 
-      - nginx-proxy_net
+    networks:
+      nginx-proxy_net:
+      proxy_net:
+        ipv4_address: 172.30.0.2
     env_file:
        - .env
     ports:
@@ -44,3 +46,9 @@ networks:
   nginx-proxy_net:
     name: nginx-proxy_net
     driver: bridge
+  proxy_net:
+    name: proxy_net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24 #Statice IP segment for NextCloud
