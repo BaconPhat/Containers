@@ -76,7 +76,6 @@ x-nc-env: &nc-env
   MAIL_DOMAIN: guibord.tech
   #=====================================
   # Postgres Config
-  # NOTE: still XION's shared instance. XION must stay powered on.
   POSTGRES_HOST: ${nextcloud_db_server}
   POSTGRES_DB: ${nextcloud_db}
   POSTGRES_USER: ${nextcloud_db_un}
@@ -168,9 +167,9 @@ services:
     image: ${nextcloud_image}
     restart: unless-stopped
     logging: *nc-logging
-    networks: [nextcloud_net]
+    networks: [nextcloud_net, proxy_net]
     ports:
-      - '${nextcloud_port}:80'
+      - '127.0.0.1:${nextcloud_port}:80'
     environment: *nc-env
     volumes: *nc-volumes
     depends_on:
@@ -219,3 +218,6 @@ networks:
   nextcloud_net:
     name: nextcloud_net
     driver: bridge
+  proxy_net:
+    name: proxy_net
+    external: true
