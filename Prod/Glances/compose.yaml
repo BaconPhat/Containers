@@ -22,16 +22,9 @@ services:
     ports:
       - '${glances_port}:61208'
     environment:
-      - GLANCES_OPT=-w -u ${glances_user} --password
-    secrets:
-      - source: glances_password
-        target: /root/.config/glances/${glances_user}.pwd
+      - GLANCES_OPT=-w
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-
-secrets:
-  glances_password:
-    file: ./secrets.env
 
 networks:
   glances_network:
