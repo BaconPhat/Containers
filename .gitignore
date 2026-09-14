@@ -3,3 +3,4 @@
 port-dictionary.md
 config.json
 secrets.env
+glances.conf
