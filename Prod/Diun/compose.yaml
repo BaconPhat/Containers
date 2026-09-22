@@ -18,6 +18,7 @@ services:
   diun:
     image: ${diun_image}
     container_name: diun
+    uts: host #Container shares the host's hostname namespace
     command: serve
     restart: unless-stopped
     networks:
