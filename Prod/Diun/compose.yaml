@@ -1,0 +1,59 @@
+---
+# ===========================================================================================
+# Title   Diun
+# Created By: PJ Guibord
+# Date 09/20/2026
+# Revision: n/a
+# Version: 1.0
+# ===========================================================================================
+# Revision History:
+#   - 1.0: Initial Release
+# ===========================================================================================
+
+# Start containers::
+#   docker compose up --detach
+
+
+services:
+  diun:
+    image: ${diun_image}
+    container_name: diun
+    command: serve
+    restart: unless-stopped
+    networks:
+      - diun_net
+    environment:
+      TZ: ${time_zone}
+      LOG_LEVEL: info                      # flip to info after the first clean run
+      DIUN_WATCH_SCHEDULE: ${diun_schedule}
+      DIUN_WATCH_WORKERS: "3"
+      DIUN_WATCH_FIRSTCHECKNOTIF: "false"
+      DIUN_PROVIDERS_DOCKER: "true"
+      DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT: "true"
+      DIUN_DEFAULTS_WATCHREPO: "true"
+      DIUN_DEFAULTS_INCLUDETAGS: '^v?\d+\.\d+\.\d+$$'
+      DIUN_DEFAULTS_SORTTAGS: semver
+      DIUN_DEFAULTS_MAXTAGS: "5"
+      DIUN_DEFAULTS_NOTIFYON: new,update
+      DIUN_REGOPTS_0_NAME: docker.io
+      DIUN_REGOPTS_0_SELECTOR: image
+      DIUN_REGOPTS_0_USERNAME: ${dockerhub_user}
+      DIUN_REGOPTS_0_PASSWORD: ${dockerhub_token}
+      DIUN_NOTIF_WEBHOOK_ENDPOINT: ${diun_webhook_endpoint}
+      DIUN_NOTIF_WEBHOOK_METHOD: POST
+      DIUN_NOTIF_WEBHOOK_HEADERS_CONTENT-TYPE: application/json
+      DIUN_NOTIF_WEBHOOK_TIMEOUT: 10s
+    volumes:
+      - ${diun_data}:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    healthcheck:
+      test: ["CMD", "diun", "healthcheck"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  diun_net:
+    name: diun_net
+    driver: bridge
