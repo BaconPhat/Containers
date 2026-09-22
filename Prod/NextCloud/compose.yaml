@@ -130,6 +130,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    labels:
+      - diun.include_tags=^17\.\d+$
 
   nextcloud-redis:
     container_name: nextcloud-redis
@@ -161,6 +163,8 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    labels:
+      - diun.watch_repo=false
 
   nextcloud:
     container_name: nextcloud

@@ -38,7 +38,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-
+    labels:
+      - diun.include_tags=^17\.\d+$
 
   vaultwarden:
     container_name: ${container_name}

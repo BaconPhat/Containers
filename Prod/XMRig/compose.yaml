@@ -29,3 +29,6 @@ services:
     volumes:
       - ./config.json:/etc/xmrig/config.json:ro
     command: ["-c", "/etc/xmrig/config.json"]
+    labels:
+      # Diun: locally built image — not in any registry
+      - diun.enable=false

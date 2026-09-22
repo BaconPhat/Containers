@@ -24,6 +24,8 @@ services:
       - immich_net
     healthcheck:
       test: redis-cli ping | grep -q PONG || exit 1
+    labels:
+      - diun.watch_repo=false
 
 
   database:
@@ -43,6 +45,8 @@ services:
     shm_size: 128mb
     healthcheck:
       disable: false
+    labels:
+      - diun.watch_repo=false
 
 
   immich-machine-learning:
@@ -57,6 +61,8 @@ services:
       - model-cache:/cache  # Docker-managed named volume - rebuilds on first start
     healthcheck:
       disable: false
+    labels:
+      - diun.watch_repo=false
 
 
   immich-server:
@@ -76,6 +82,8 @@ services:
       - '${UPLOAD_LOCATION}:/data'
     healthcheck:
       disable: false
+    labels:
+      - diun.watch_repo=false
 
 
 networks:
