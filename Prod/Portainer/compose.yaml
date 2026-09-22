@@ -18,7 +18,7 @@
 services:
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:2.39.6
+    image: ${portainer_image}
     restart: unless-stopped
     networks: 
       - portainer_net
