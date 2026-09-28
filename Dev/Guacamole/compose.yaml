@@ -18,59 +18,85 @@
 
 services:
   guacd:
-    image: guacamole/guacd:1.5.5
+    image: ${guacd_image}
     container_name: guacd
     restart: unless-stopped
-    user: "988:988"
+    user: ${USR}
+    environment:
+      HOME: /tmp
     volumes:
       - /storage/container_data/guacamole/drive:/drive:rw
       - /storage/container_data/guacamole/record:/record:rw
     networks:
-      - guacamole_net
+      - guacd_net
+    healthcheck:
+      test: ["CMD-SHELL", "echo > /dev/tcp/127.0.0.1/4822 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   guacamole-db:
-    image: postgres:16
+    image: ${postgres_image}
     container_name: guacamole-db
     restart: unless-stopped
-    user: "988:988"
+    user: ${USR}
     mem_limit: 256m
     environment:
-      POSTGRES_DB: guacamole_db
-      POSTGRES_USER: guacamole_user
+      POSTGRES_DB: ${GUAC_DB_NAME}
+      POSTGRES_USER: ${GUAC_DB_USER}
       POSTGRES_PASSWORD: "${GUAC_DB_PASSWORD}"
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - /storage/container_data/guacamole/db:/var/lib/postgresql/data:rw
       - /storage/container_data/guacamole/initdb:/docker-entrypoint-initdb.d:ro
     networks:
-      - guacamole_net
+      - db_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${GUAC_DB_USER} -d ${GUAC_DB_NAME}"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   guacamole:
-    image: guacamole/guacamole:1.5.5
+    image: ${guacamole_image}
     container_name: guacamole
     restart: unless-stopped
-    user: "988:988"
+    user: ${USR}
     depends_on:
-      - guacd
-      - guacamole-db
+      guacd:
+        condition: service_healthy
+      guacamole-db:
+        condition: service_healthy
     environment:
-      HOME: //tmp
+      HOME: /tmp
+      GUACAMOLE_HOME: /guacamole_home
       WEBAPP_CONTEXT: ROOT
       GUACD_HOSTNAME: guacd
-      POSTGRESQL_HOSTNAME: guacamole-db
-      POSTGRESQL_DATABASE: guacamole_db
-      POSTGRESQL_USER: guacamole_user
+      POSTGRESQL_HOSTNAME: ${GUAC_DB_HOST}
+      POSTGRESQL_PORT: ${GUAC_DB_PORT}
+      POSTGRESQL_DATABASE: ${GUAC_DB_NAME}
+      POSTGRESQL_USER: ${GUAC_DB_USER}
       POSTGRESQL_PASSWORD: "${GUAC_DB_PASSWORD}"
       EXTENSIONS: totp
-      GUACAMOLE_HOME: /guacamole_home
     volumes:
       - /storage/container_data/guacamole/home:/guacamole_home:rw
       - /storage/container_data/guacamole/webrecord:/record:rw
     ports:
       - "8280:8080"
     networks:
-      - guacamole_net
+      - guacd_net
+      - db_net
+    healthcheck:
+      test: ["CMD-SHELL", "echo > /dev/tcp/127.0.0.1/8080 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
 
 networks:
-  guacamole_net:
+  guacd_net:
+    driver: bridge
+  db_net:
     driver: bridge
