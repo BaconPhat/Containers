@@ -22,6 +22,8 @@ services:
     image: ${DB_IMAGE}
     container_name: gitea_db
     restart: unless-stopped
+    networks:
+      - gitea_net
     environment:
       TZ: ${TZ}
       POSTGRES_DB: ${GITEA_DB_NAME}
@@ -30,8 +32,6 @@ services:
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.utf8 --data-checksums"
     volumes:
       - ${GITEA_DB_PATH}:/var/lib/postgresql/data
-    networks:
-      - gitea_net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 30s
@@ -48,6 +48,11 @@ services:
     depends_on:
       gitea-db:
         condition: service_healthy
+    ports:
+      - "${GITEA_SSH_PORT}:22"
+    networks:
+      - gitea_net
+      - proxy_net
     environment:
       TZ: ${TZ}
       USER_UID: "1000"
@@ -67,17 +72,13 @@ services:
       GITEA__security__INSTALL_LOCK: "true"
       GITEA__security__SECRET_KEY: ${GITEA_SECRET_KEY}
       GITEA__security__INTERNAL_TOKEN: ${GITEA_INTERNAL_TOKEN}
+      GITEA__security__REVERSE_PROXY_TRUSTED_PROXIES: ${GITEA_REVERSE_PROXY_TRUSTED_PROXIES}
       # --- access ---
       GITEA__service__DISABLE_REGISTRATION: "true"
       GITEA__service__REQUIRE_SIGNIN_VIEW: "true"
     volumes:
       - ${GITEA_DATA_PATH}:/data
       - /etc/localtime:/etc/localtime:ro
-    ports:
-      - "${GITEA_HTTP_PORT}:3000"
-      - "${GITEA_SSH_PORT}:22"
-    networks:
-      - gitea_net
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:3000/api/healthz"]
       interval: 30s
@@ -88,3 +89,5 @@ services:
 networks:
   gitea_net:
     name: gitea_net
+  proxy_net:
+    external: true
