@@ -57,6 +57,9 @@ services:
       TZ: ${TZ}
       USER_UID: "1000"
       USER_GID: "1000"
+      # --- picture ---
+      GITEA__picture__ENABLE_FEDERATED_AVATAR: "false"
+      GITEA__picture__DISABLE_GRAVATAR: "true"
       # --- database ---
       GITEA__database__DB_TYPE: postgres
       GITEA__database__HOST: gitea-db:5432
@@ -68,14 +71,21 @@ services:
       GITEA__server__ROOT_URL: https://${GITEA_DOMAIN}/
       GITEA__server__SSH_DOMAIN: ${GITEA_SSH_DOMAIN}
       GITEA__server__SSH_PORT: ${GITEA_SSH_PORT}
-      # --- security (skip web installer; secrets pre-generated) ---
+      GITEA__server__LANDING_PAGE: explore
+      GITEA__service__DISABLE_ORGANIZATIONS_PAGE: "true"
+      # --- security ---
       GITEA__security__INSTALL_LOCK: "true"
       GITEA__security__SECRET_KEY: ${GITEA_SECRET_KEY}
       GITEA__security__INTERNAL_TOKEN: ${GITEA_INTERNAL_TOKEN}
       GITEA__security__REVERSE_PROXY_TRUSTED_PROXIES: ${GITEA_REVERSE_PROXY_TRUSTED_PROXIES}
       # --- access ---
       GITEA__service__DISABLE_REGISTRATION: "true"
-      GITEA__service__REQUIRE_SIGNIN_VIEW: "true"
+      GITEA__service__REQUIRE_SIGNIN_VIEW: "false"
+      GITEA__service__DEFAULT_PRIVATE: private
+      GITEA__service__DEFAULT_KEEP_EMAIL_PRIVATE: "true"
+      GITEA__service__DISABLE_USERS_PAGE: "true"
+      # --- other ---
+      GITEA__other__SHOW_FOOTER_VERSION: "false"
     volumes:
       - ${GITEA_DATA_PATH}:/data
       - /etc/localtime:/etc/localtime:ro
